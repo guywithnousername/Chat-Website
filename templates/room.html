@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
+<button type="button" onclick="window.location.reload(1);">Refresh messages</button>
 <form method = "post">
     <label for = "message"> Write a new message: </label><br>
     <input type="text" id="message" name="message">
 </form>
+{% if messages %}
 <ul>
 {% for msg,username,time in messages %}
 <p>{{ username.title() }}-</p>
@@ -11,5 +13,8 @@
 <li> {{ msg }}</li>
 <br>
 {% endfor %}
+{% else %}
+<p>It looks like this room doesn't have any messages. Be the first to say something!</p>
+{% endif %}
 </ul>
 {% endblock %}

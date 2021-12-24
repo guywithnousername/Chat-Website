@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ type }}</h1>
+<br>
+<form method = "post">
+    <label for = "name"> Name: </label><br>
+    <input type="text" id="name" name="name"><br>
+    <label for="pass"> Password: </label><br>
+    <input type="text" id="pass" name="password"><br><br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

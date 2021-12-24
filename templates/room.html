@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method = "post">
+    <label for = "message"> Write a new message: </label><br>
+    <input type="text" id="message" name="message">
+</form>
+<ul>
+{% for msg,username,time in messages %}
+<p>{{ username.title() }}-</p>
+<p>{{ time }}</p>
+<li> {{ msg }}</li>
+<br>
+{% endfor %}
+</ul>
+{% endblock %}

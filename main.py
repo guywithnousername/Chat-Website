@@ -65,7 +65,7 @@ def chat():
     cur = con.cursor()
     if request.method == "POST":
         message = request.form.get("message")
-        name = request.cookies.get("Username") or 'The person typing this is not logged in'
+        name = request.cookies.get("Username") or 'Unnamed'
         cur.execute("""
         INSERT INTO Messages (RoomName,MSG,Username)
         VALUES (?,?,?)
@@ -99,5 +99,5 @@ def close_connection(exception):
 
 if __name__ == "__main__":
 	from waitress import serve
-	print("Serving at https://127.0.0.1:8000 . . .")
+	print("Serving at http://192.168.86.23:8000/ . . .")
 	serve(app, host="0.0.0.0", port=8000)

@@ -3,9 +3,13 @@ from flask import *
 from datetime import datetime
 import sqlite3
 from database import *
+from cryptography.fernet import Fernet
 
 app = Flask(__name__)
 DATABASE = "database.db"
+app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
+cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
+fernet = Fernet(cryptokey)
 
 @app.route("/")
 def index():
@@ -59,12 +63,16 @@ def login():
                 return rend("message.html",message="You have entered the password incorrectly.")
     return rend('usernameform.html',type="Login to your account")
 
-@app.route("/chatroom",methods = ['GET','POST'])
-def chat():
+@app.route("/chatroom/<room>",methods = ['GET','POST'])
+def chat(room):
     init_db()
     con = get_db()
     con.row_factory = sqlite3.Row
     cur = con.cursor()
+    encryptedroomname = bytes(request.cookies.get("Room"),'utf-8')
+    decodedroom = fernet.decrypt(encryptedroomname).decode()
+    if (room != decodedroom):
+        return rend("message.html",message="You cannot access this room.")
     if request.method == "POST":
         message = request.form.get("message")
         name = request.cookies.get("Username") or 'Unnamed'
@@ -72,13 +80,13 @@ def chat():
         cur.execute("""
         INSERT INTO Messages (RoomName,MSG,Username,Timestamp)
         VALUES (?,?,?,?)
-        """, ('Family',message,name,time))
+        """, (room.title(),message,name,time))
         con.commit()
     select = query_db("""
         SELECT MSG,Username,Timestamp FROM Messages
-        WHERE RoomName = 'Family'
-        ORDER BY Timestamp DESC
-        """)
+        WHERE RoomName = ?
+        ORDER BY Timestamp
+        """,(room.title(),))
     con.close()
     select = [(x[0],x[1],x[2]) for x in select]
     return rend("room.html",messages=select)
@@ -96,7 +104,9 @@ def selrooms():
             return rend("message.html",message=f"The room {name.title()} was not found.")
         if ret['Pass'] != password: 
             return rend("message.html",message="The password was wrong.")
-        return redirect(url_for("chat"), code = 302)
+        resp = make_response(redirect(f"/chatroom/{(name.title())}",code=302))
+        resp.set_cookie('Room',fernet.encrypt(name.title().encode()))
+        return resp
     return rend("usernameform.html",type="Join a room")
 
 @app.route("/logout",methods = ['GET','POST'])

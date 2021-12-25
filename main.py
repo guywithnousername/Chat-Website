@@ -32,7 +32,7 @@ def reg():
             return render_template('message.html',message="That username is taken."),403
         finally:
             con.close()
-        return render_template('user.html', name=name.title(),password=password)
+        return render_template('message.html', message="Great! You created an account. To verify it, go to the login page and log in.")
     return render_template('usernameform.html',type='Register')
 
 @app.route("/login",methods = ['GET','POST'])

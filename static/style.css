@@ -3,3 +3,14 @@ body{margin:0}
 .topnav a{float:left;color:#f2f2f2;text-align:center;padding:14px 16px;text-decoration:none;font-size:17px}
 .topnav a:hover{background-color:#ddd;color:#000}
 .topnav a.active{background-color:#04aa6d;color:#fff}
+input{
+    box-shadow: 0 0 10px 2px rgba(100,100,100,0.3)
+}
+input:invalid+span::after {
+    content:'(required)';
+    color: red;
+}
+input:valid+span::after {
+    content:'\2713';
+    color: #04aa6d;
+}

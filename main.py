@@ -1,4 +1,6 @@
-from flask import Flask, request, render_template, g,make_response, url_for
+from flask import render_template as rend
+from flask import *
+from datetime import datetime
 import sqlite3
 from database import *
 
@@ -7,7 +9,7 @@ DATABASE = "database.db"
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return rend("index.html")
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():
@@ -15,10 +17,10 @@ def reg():
     if request.method == "POST":
         name = request.form.get("name")
         if ' ' in name:
-            return render_template('message.html',message="Names cannot have spaces."), 401
+            return rend('message.html',message="Names cannot have spaces."), 401
         password = request.form.get("password")
         if len(password) < 8:
-            return render_template('message.html',message="Your password is not strong enough."), 401
+            return rend('message.html',message="Your password is not strong enough."), 401
         con = get_db()
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -29,11 +31,11 @@ def reg():
             """,(name.title(),password))
             con.commit()
         except Exception as err:
-            return render_template('message.html',message="That username is taken."),403
+            return rend('message.html',message="That username is taken."),403
         finally:
             con.close()
-        return render_template('message.html', message="Great! You created an account. To verify it, go to the login page and log in.")
-    return render_template('usernameform.html',type='Register')
+        return rend('message.html', message="Great! You created an account. To verify it, go to the login page and log in.")
+    return rend('usernameform.html',type='Register')
 
 @app.route("/login",methods = ['GET','POST'])
 def login():
@@ -47,15 +49,15 @@ def login():
         cur.execute("SELECT * FROM Users WHERE Username = ?",(name.title(),))
         ret = cur.fetchone()
         if ret == None:
-            return render_template('message.html',message="The username has been entered incorrectly.")
+            return rend('message.html',message="The username has been entered incorrectly.")
         else:
             if ret['Pass'] == password:
-                resp = make_response(render_template('user.html', name=name.title(),password=password))
-                resp.set_cookie("Username",name)
+                resp = make_response(rend('user.html', name=name.title(),password=password))
+                resp.set_cookie("Username",name.title())
                 return resp
             else:
-                return render_template("message.html",message="You have entered the password incorrectly.")
-    return render_template('usernameform.html',type="Login to your account")
+                return rend("message.html",message="You have entered the password incorrectly.")
+    return rend('usernameform.html',type="Login to your account")
 
 @app.route("/chatroom",methods = ['GET','POST'])
 def chat():
@@ -66,28 +68,44 @@ def chat():
     if request.method == "POST":
         message = request.form.get("message")
         name = request.cookies.get("Username") or 'Unnamed'
+        time = datetime.now().strftime("%B %d, %Y %I:%M%p")
         cur.execute("""
-        INSERT INTO Messages (RoomName,MSG,Username)
-        VALUES (?,?,?)
-        """, ('family',message,
-        name))
+        INSERT INTO Messages (RoomName,MSG,Username,Timestamp)
+        VALUES (?,?,?,?)
+        """, ('Family',message,name,time))
         con.commit()
     select = query_db("""
         SELECT MSG,Username,Timestamp FROM Messages
-        WHERE RoomName = 'family'
+        WHERE RoomName = 'Family'
         ORDER BY Timestamp DESC
         """)
     con.close()
     select = [(x[0],x[1],x[2]) for x in select]
-    return render_template("room.html",messages=select)
+    return rend("room.html",messages=select)
+
+@app.route("/roomselect",methods=['GET','POST'])
+def selrooms():
+    if request.method == "POST":
+        name = request.form.get("name")
+        password = request.form.get("password")
+        con = get_db()
+        cur = con.cursor()
+        cur = cur.execute("SELECT Pass FROM Rooms WHERE RName = ? ", (name.title(), ))
+        ret = cur.fetchone()
+        if not ret:
+            return rend("message.html",message=f"The room {name.title()} was not found.")
+        if ret['Pass'] != password: 
+            return rend("message.html",message="The password was wrong.")
+        return redirect(url_for("chat"), code = 302)
+    return rend("usernameform.html",type="Join a room")
 
 @app.route("/logout",methods = ['GET','POST'])
 def logout():
     if request.method == "POST":
-        resp = make_response(render_template("message.html",message="You have been successfully logged out"))
+        resp = make_response(rend("message.html",message="You have been successfully logged out"))
         resp.set_cookie('Username', '', expires=0)
         return resp
-    return render_template('logout.html')
+    return rend('logout.html')
 
 @app.teardown_appcontext
 def close_connection(exception):

@@ -17,7 +17,6 @@ def index():
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():
-    init_db()
     if request.method == "POST":
         name = request.form.get("name")
         if ' ' in name:

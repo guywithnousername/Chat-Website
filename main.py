@@ -13,7 +13,12 @@ fernet = Fernet(cryptokey)
 
 @app.route("/")
 def index():
-    return rend("index.html")
+    name = request.cookies.get("Username")
+    password = query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
+    if request.cookies.get("Username") == None:
+        return rend("index.html")
+    else:
+        return rend("user.html",name=name,password=password)
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():

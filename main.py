@@ -81,15 +81,16 @@ def chat(room):
         message = request.form.get("message")
         name = request.cookies.get("Username") or 'Unnamed'
         time = datetime.now().strftime("%B %d, %Y %I:%M%p")
+        acttime = int(datetime.now().strftime("%s"))
         cur.execute("""
-        INSERT INTO Messages (RoomName,MSG,Username,Timestamp)
-        VALUES (?,?,?,?)
-        """, (room.title(),message,name,time))
+        INSERT INTO Messages (RoomName,MSG,Username,Timestring,Time)
+        VALUES (?,?,?,?,?)
+        """, (room.title(),message,name,time,acttime))
         con.commit()
     select = query_db("""
-        SELECT MSG,Username,Timestamp FROM Messages
+        SELECT MSG,Username,Timestring FROM Messages
         WHERE RoomName = ?
-        ORDER BY Timestamp
+        ORDER BY Time DESC
         """,(room.title(),))
     con.close()
     select = [(x[0],x[1],x[2]) for x in select]

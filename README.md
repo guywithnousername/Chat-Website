@@ -11,3 +11,21 @@ This website uses:
 - Flask (from flask import *)
 - Cryptography (import cryptography.fernet)
 - Waitress (from waitress import serve)
+in a .venv virtual environment.
+
+To download them on Mac, do:
+```
+python3 -m venv .venv
+. .venv/bin/activate
+pip install Flask
+pip install waitress
+pip install cryptography
+```
+To download them on Windows, do:
+```
+py -3 -m venv .venv
+venv\Scripts\activate
+pip install Flask
+pip install waitress
+pip install cryptography
+```

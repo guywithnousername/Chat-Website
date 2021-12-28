@@ -78,4 +78,4 @@ def newroom():
         finally:
             con.close()
         return rend("message.html",message="The room was successfully created.")
-    return rend("nameform.html")
+    return rend("nameform.html",type="Create a new room")

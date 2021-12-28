@@ -29,7 +29,7 @@ def index():
             if (pass1 != pass2):
                 return rend("message.html",message="You entered your new passwords incorrectly")
             con = get_db()
-            query_db("UPDATE Users SET Pass = ? WHERE Pass = ?",args=(pass1,oldpass))
+            query_db("UPDATE Users SET Pass = ? WHERE Username = ?",args=(pass1,name))
             con.commit()
             con.close()
             return rend("message.html",message="Your password was changed successfully!")

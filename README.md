@@ -25,9 +25,17 @@ python3 main.py
 To download them on Windows, do:
 ```
 py -3 -m venv .venv
-venv\Scripts\activate
+.venv\Scripts\activate
 pip install Flask
 pip install waitress
 pip install cryptography
 python3 main.py
+```
+Don't forget to activate the venv virtual environment every time you run this with
+```
+. .venv/bin/activate
+```
+or
+```
+.venv/Scripts/activate
 ```

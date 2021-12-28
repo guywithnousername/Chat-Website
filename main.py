@@ -32,6 +32,7 @@ def index():
             query_db("UPDATE Users SET Pass = ? WHERE Pass = ?",args=(pass1,oldpass))
             con.commit()
             con.close()
+            return rend("message.html",message="Your password was changed successfully!")
         return rend("user.html",name=name)
 
 @app.route("/register",methods = ['GET','POST'])
@@ -74,7 +75,7 @@ def login():
             return rend('message.html',message="The username has been entered incorrectly.")
         else:
             if ret['Pass'] == password:
-                resp = make_response(rend('user.html', name=name.title(),password=password))
+                resp = make_response(redirect("/"))
                 resp.set_cookie("Username",name.title())
                 return resp
             else:

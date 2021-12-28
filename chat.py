@@ -54,4 +54,28 @@ def selrooms():
         resp = make_response(redirect(f"/chatroom/{(name.title())}",code=302))
         resp.set_cookie('Room',fernet.encrypt(name.title().encode()))
         return resp
-    return rend("usernameform.html",type="Join a room")
+    return rend("nameform.html",type="Join a room")
+
+@chatpage.route("/newroom",methods=['GET','POST'])
+def newroom():
+    if request.method == "POST":
+        name = request.form.get("name")
+        password = request.form.get("password")
+        if ' ' in name:
+            return rend('message.html',message="Names cannot have spaces."), 401
+        if len(password) < 8:
+            return rend('message.html',message="Your password is not strong enough."), 401
+        con = database.get_db()
+        cur = con.cursor()
+        try:
+            cur = cur.execute("""
+            INSERT INTO Rooms (RName,Pass)
+            VALUES (?,?)
+            """,(name.title(),password))
+            con.commit()
+        except:
+            return rend("message.html",message="That name is taken.")
+        finally:
+            con.close()
+        return rend("message.html",message="The room was successfully created.")
+    return rend("nameform.html")

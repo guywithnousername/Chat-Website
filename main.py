@@ -53,12 +53,12 @@ def reg():
             VALUES (?,?);
             """,(name.title(),password))
             con.commit()
-        except Exception as err:
+        except:
             return rend('message.html',message="That username is taken."),403
         finally:
             con.close()
         return rend('message.html', message="Great! You created an account. To verify it, go to the login page and log in.")
-    return rend('usernameform.html',type='Register')
+    return rend('nameform.html',type='Register')
 
 @app.route("/login",methods = ['GET','POST'])
 def login():
@@ -80,7 +80,7 @@ def login():
                 return resp
             else:
                 return rend("message.html",message="You have entered the password incorrectly.")
-    return rend('usernameform.html',type="Login to your account")
+    return rend('nameform.html',type="Login to your account")
 
 @app.route("/logout",methods = ['GET','POST'])
 def logout():

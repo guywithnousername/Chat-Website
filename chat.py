@@ -28,6 +28,7 @@ def chat(room):
         VALUES (?,?,?,?,?)
         """, (room.title(),message,name,time,acttime))
         con.commit()
+        return redirect(f"/chatroom/{room}")
     select = database.query_db("""
         SELECT MSG,Username,Timestring FROM Messages
         WHERE RoomName = ?

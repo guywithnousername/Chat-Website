@@ -13,14 +13,26 @@ app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
 fernet = Fernet(cryptokey)
 
-@app.route("/")
+@app.route("/",methods= ["GET","POST"])
 def index():
     name = request.cookies.get("Username")
-    password = query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)
     if request.cookies.get("Username") == None:
         return rend("index.html")
     else:
-        return rend("user.html",name=name,password=password["Pass"])
+        if request.method == "POST":
+            password = query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
+            oldpass = request.form.get("pass")
+            pass1 = request.form.get("newpass")
+            pass2 = request.form.get("newpass2")
+            if (oldpass != password):
+                return rend("message.html",message="You entered your old password incorrectly")
+            if (pass1 != pass2):
+                return rend("message.html",message="You entered your new passwords incorrectly")
+            con = get_db()
+            query_db("UPDATE Users SET Pass = ? WHERE Pass = ?",args=(pass1,oldpass))
+            con.commit()
+            con.close()
+        return rend("user.html",name=name)
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():

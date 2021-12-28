@@ -1,5 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>Hello {{ name }}! Your password is ' {{ password }} ' </p>
+<p>Hello {{ name }}! </p><br>
+<h1>Account settings</h1>
+<h2>Reset password:</h2>
+<form method="POST">
+    <label for="pass">Old password:</label><br>
+    <input type="password" id="pass" name="pass" required><span></span><br>
+    <label for="newpass">New password:</label><br>
+    <input type="password" id="newpass" name="newpass" minlength = "8" required><span></span><br>
+    <label for="newpass2">New password (again):</label><br>
+    <input type="password" id="newpass2" name="newpass2" minlength = "8" required><span></span><br>
+    <input type="submit" value="Submit">
+</form>
 {% endblock %}

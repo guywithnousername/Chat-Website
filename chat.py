@@ -36,7 +36,7 @@ def chat(room):
         """,(room.title(),))
     con.close()
     select = [(x[0],x[1],x[2]) for x in select]
-    return rend("room.html",messages=select)
+    return rend("room.html",rname=room,messages=select)
 
 @chatpage.route("/roomselect",methods=['GET','POST'])
 def selrooms():

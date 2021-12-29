@@ -19,21 +19,26 @@ def index():
     if request.cookies.get("Username") == None:
         return rend("index.html")
     else:
-        if request.method == "POST":
-            password = query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
-            oldpass = request.form.get("pass")
-            pass1 = request.form.get("newpass")
-            pass2 = request.form.get("newpass2")
-            if (oldpass != password):
-                return rend("message.html",message="You entered your old password incorrectly")
-            if (pass1 != pass2):
-                return rend("message.html",message="You entered your new passwords incorrectly")
-            con = get_db()
-            query_db("UPDATE Users SET Pass = ? WHERE Username = ?",args=(pass1,name))
-            con.commit()
-            con.close()
-            return rend("message.html",message="Your password was changed successfully!")
         return rend("user.html",name=name)
+
+@app.route("/changepassword",methods = ['GET','POST'])
+def changepass():
+    name = request.cookies.get("Username")
+    if request.method == "POST":
+        password = query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
+        oldpass = request.form.get("pass")
+        pass1 = request.form.get("newpass")
+        pass2 = request.form.get("newpass2")
+        if (oldpass != password):
+            return rend("message.html",message="You entered your old password incorrectly")
+        if (pass1 != pass2):
+            return rend("message.html",message="You entered your new passwords incorrectly")
+        con = get_db()
+        query_db("UPDATE Users SET Pass = ? WHERE Username = ?",args=(pass1,name))
+        con.commit()
+        con.close()
+        return rend("message.html",message="Your password was changed successfully!")
+    return rend("changepass.html")
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():

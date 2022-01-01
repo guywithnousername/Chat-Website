@@ -9,7 +9,11 @@
 {% if messages %}
 <ul>
 {% for msg,username,time in messages %}
-<p>{{ username.title() }}-</p>
+{% if (username == "Unnamed") %}
+<p>Unnamed-</p>
+{% else %}
+<a href={{ "/users/"+username }}>{{ username.title() }}-</a>
+{% endif %}
 <p>{{ time }}</p>
 <li> {{ msg }}</li>
 <br>

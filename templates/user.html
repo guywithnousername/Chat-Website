@@ -2,7 +2,10 @@
 
 {% block content %}
 <p>Hello {{ name }}! </p><br>
-<a href="/newroom">You can create a room here!</a>
-<h1>Account settings</h1>
-<a href="/changepassword">Reset password</a>
+<h1>Options</h1>
+<div id="verticalnav">
+    <a href="/newroom">Create a room</a><br>
+    <a href="/change/password">Reset password</a><br>
+    <a href="/change/profile">Change profile</a>
+</div>
 {% endblock %}

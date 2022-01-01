@@ -62,9 +62,9 @@ def newroom():
         name = request.form.get("name")
         password = request.form.get("password")
         if ' ' in name:
-            return rend('message.html',message="Names cannot have spaces."), 401
+            return rend("message.html",message="Names cannot have spaces."), 401
         if len(password) < 8:
-            return rend('message.html',message="Your password is not strong enough."), 401
+            return rend("message.html",message="Your password is not strong enough."), 401
         con = database.get_db()
         cur = con.cursor()
         try:

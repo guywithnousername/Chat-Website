@@ -21,13 +21,37 @@ def index():
 
 @app.route("/users/<name>")
 def viewuser(name):
+    con = get_db()
+    cur = con.cursor()
     name = name.title()
+    cur.execute("SELECT * FROM Users WHERE Username = ?",(name,))
+    sel = cur.fetchone()
+    if sel == None:
+        return rend("message.html",message="That user was not found.")
     username = request.cookies.get("Username")
     if username == name:
         return redirect("/")
-    return render_template("userpage.html",name=name,bio="This user does not have a bio.")
+    return render_template("userpage.html",name=name,bio=sel["Bio"])
 
-@app.route("/changepassword",methods = ['GET','POST'])
+@app.route("/change/profile",methods = ['GET','POST'])
+def changeprof():
+    name = request.cookies.get("Username")
+    con = get_db()
+    cur = con.cursor()
+    bio = cur.execute("SELECT * FROM Users WHERE Username = ?",(name,)).fetchone()["Bio"]
+    if (request.method == "POST"):
+        new = request.form.get("bio")
+        cur.execute("""
+        UPDATE Users
+        SET Bio = ?
+        WHERE Username = ?
+        """,(new,name))
+        con.commit()
+        return rend("message.html",message="Your bio was successfully updated!")
+    con.close()
+    return rend("changeprof.html",name=name,bio=bio)
+
+@app.route("/change/password",methods = ['GET','POST'])
 def changepass():
     name = request.cookies.get("Username")
     if request.method == "POST":
@@ -51,10 +75,10 @@ def reg():
     if request.method == "POST":
         name = request.form.get("name")
         if ' ' in name:
-            return rend('message.html',message="Names cannot have spaces."), 401
+            return rend("message.html",message="Names cannot have spaces."), 401
         password = request.form.get("password")
         if len(password) < 8:
-            return rend('message.html',message="Your password is not strong enough."), 401
+            return rend("message.html",message="Your password is not strong enough."), 401
         con = get_db()
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -65,11 +89,11 @@ def reg():
             """,(name.title(),password))
             con.commit()
         except:
-            return rend('message.html',message="That username is taken."),403
+            return rend("message.html",message="That username is taken."),403
         finally:
             con.close()
-        return rend('message.html', message="Great! You created an account. To verify it, go to the login page and log in.")
-    return rend('nameform.html',type='Register')
+        return rend("message.html", message="Great! You created an account. To verify it, go to the login page and log in.")
+    return rend("nameform.html",type='Register')
 
 @app.route("/login",methods = ['GET','POST'])
 def login():
@@ -83,7 +107,7 @@ def login():
         cur.execute("SELECT * FROM Users WHERE Username = ?",(name.title(),))
         ret = cur.fetchone()
         if ret == None:
-            return rend('message.html',message="The username has been entered incorrectly.")
+            return rend("message.html",message="The username has been entered incorrectly.")
         else:
             if ret['Pass'] == password:
                 resp = make_response(redirect("/"))
@@ -91,7 +115,7 @@ def login():
                 return resp
             else:
                 return rend("message.html",message="You have entered the password incorrectly.")
-    return rend('nameform.html',type="Login to your account")
+    return rend("nameform.html",type="Login to your account")
 
 @app.route("/logout",methods = ['GET','POST'])
 def logout():
@@ -99,7 +123,7 @@ def logout():
         resp = make_response(rend("message.html",message="You have been successfully logged out"))
         resp.set_cookie('Username', '', expires=0)
         return resp
-    return rend('logout.html')
+    return rend("logout.html")
 
 @app.teardown_appcontext
 def close_connection(exception):

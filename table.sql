@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS Users (
 	ID INTEGER PRIMARY KEY,
    	Username TEXT NOT NULL,
 	Pass TEXT NOT NULL,
+	Bio TEXT DEFAULT 'This user does not have a bio.',
 	UNIQUE(Username)
 );
 CREATE TABLE IF NOT EXISTS Messages (

@@ -10,8 +10,6 @@ app = Flask(__name__)
 app.register_blueprint(chatpage)
 DATABASE = "database.db"
 app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
-cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
-fernet = Fernet(cryptokey)
 
 @app.route("/",methods= ["GET","POST"])
 def index():
@@ -20,6 +18,14 @@ def index():
         return rend("index.html")
     else:
         return rend("user.html",name=name)
+
+@app.route("/users/<name>")
+def viewuser(name):
+    name = name.title()
+    username = request.cookies.get("Username")
+    if username == name:
+        return redirect("/")
+    return render_template("userpage.html",name=name,bio="This user does not have a bio.")
 
 @app.route("/changepassword",methods = ['GET','POST'])
 def changepass():

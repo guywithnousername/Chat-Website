@@ -1,9 +1,7 @@
 from flask import render_template as rend
 from flask import *
-from datetime import datetime
 import sqlite3
 from database import *
-from cryptography.fernet import Fernet
 from chat import chatpage
 from user import userpage
 

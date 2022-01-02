@@ -5,9 +5,11 @@ import sqlite3
 from database import *
 from cryptography.fernet import Fernet
 from chat import chatpage
+from user import userpage
 
 app = Flask(__name__)
 app.register_blueprint(chatpage)
+app.register_blueprint(userpage)
 DATABASE = "database.db"
 app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 
@@ -18,57 +20,6 @@ def index():
         return rend("index.html")
     else:
         return rend("user.html",name=name)
-
-@app.route("/users/<name>")
-def viewuser(name):
-    con = get_db()
-    cur = con.cursor()
-    name = name.title()
-    cur.execute("SELECT * FROM Users WHERE Username = ?",(name,))
-    sel = cur.fetchone()
-    if sel == None:
-        return rend("message.html",message="That user was not found.")
-    username = request.cookies.get("Username")
-    if username == name:
-        return redirect("/")
-    return render_template("userpage.html",name=name,bio=sel["Bio"])
-
-@app.route("/change/profile",methods = ['GET','POST'])
-def changeprof():
-    name = request.cookies.get("Username")
-    con = get_db()
-    cur = con.cursor()
-    bio = cur.execute("SELECT * FROM Users WHERE Username = ?",(name,)).fetchone()["Bio"]
-    if (request.method == "POST"):
-        new = request.form.get("bio")
-        cur.execute("""
-        UPDATE Users
-        SET Bio = ?
-        WHERE Username = ?
-        """,(new,name))
-        con.commit()
-        return rend("message.html",message="Your bio was successfully updated!")
-    con.close()
-    return rend("changeprof.html",name=name,bio=bio)
-
-@app.route("/change/password",methods = ['GET','POST'])
-def changepass():
-    name = request.cookies.get("Username")
-    if request.method == "POST":
-        password = query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
-        oldpass = request.form.get("pass")
-        pass1 = request.form.get("newpass")
-        pass2 = request.form.get("newpass2")
-        if (oldpass != password):
-            return rend("message.html",message="You entered your old password incorrectly")
-        if (pass1 != pass2):
-            return rend("message.html",message="You entered your new passwords incorrectly")
-        con = get_db()
-        query_db("UPDATE Users SET Pass = ? WHERE Username = ?",args=(pass1,name))
-        con.commit()
-        con.close()
-        return rend("message.html",message="Your password was changed successfully!")
-    return rend("changepass.html")
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():

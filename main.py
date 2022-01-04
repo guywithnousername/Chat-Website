@@ -9,17 +9,23 @@ from user import userpage
 app = Flask(__name__)
 app.register_blueprint(chatpage)
 app.register_blueprint(userpage)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'mldu@cydu.net'
+app.config['MAIL_PASSWORD'] = 'LTb#s7EC8SRl$pPpcD'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 DATABASE = "database.db"
 app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 
 @app.route("/",methods= ["GET","POST"])
 def index():
-    # msg = Message("Email",
-    # sender="mldu@cydu.net",
-    # recipients=["mldu@cydu.net"])
-    # msg.body = "EEEEEMMMMMAAAAAIIIIILLLLL"
-    # mail.send(msg)
+    msg = Message("Email",
+    sender="mldu@cydu.net",
+    recipients=["mldu@cydu.net"])
+    msg.body = "EEEEEMMMMMAAAAAIIIIILLLLL"
+    mail.send(msg)
     name = request.cookies.get("Username")
     if request.cookies.get("Username") == None:
         return rend("index.html")

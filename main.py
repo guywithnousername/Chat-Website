@@ -1,5 +1,6 @@
 from flask import render_template as rend
 from flask import *
+from flask_mail import *
 import sqlite3
 from database import *
 from chat import chatpage
@@ -8,11 +9,17 @@ from user import userpage
 app = Flask(__name__)
 app.register_blueprint(chatpage)
 app.register_blueprint(userpage)
+mail = Mail(app)
 DATABASE = "database.db"
 app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 
 @app.route("/",methods= ["GET","POST"])
 def index():
+    # msg = Message("Email",
+    # sender="mldu@cydu.net",
+    # recipients=["mldu@cydu.net"])
+    # msg.body = "EEEEEMMMMMAAAAAIIIIILLLLL"
+    # mail.send(msg)
     name = request.cookies.get("Username")
     if request.cookies.get("Username") == None:
         return rend("index.html")
@@ -83,6 +90,6 @@ def close_connection(exception):
 
 
 if __name__ == "__main__":
-	from waitress import serve
-	print("Serving at http://192.168.86.23:8000/ . . .")
-	serve(app, host="0.0.0.0", port=8000)
+    from waitress import serve
+    print("Serving at http://192.168.86.23:8000/ . . .")
+    serve(app, host="0.0.0.0", port=8000)

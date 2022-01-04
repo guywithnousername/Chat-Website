@@ -11,6 +11,7 @@ This website uses:
 - Flask (from flask import *)
 - Cryptography (import cryptography.fernet)
 - Waitress (from waitress import serve)
+- Flask Mail (from flask_mail import *)
 in a .venv virtual environment.
 
 To download them on Mac, do: (you also need to have python3)
@@ -20,6 +21,7 @@ python3 -m venv .venv
 pip install Flask
 pip install waitress
 pip install cryptography
+pip install Flask-Mail
 python3 main.py
 ```
 To download them on Windows, do:
@@ -29,6 +31,7 @@ py -3 -m venv .venv
 pip install Flask
 pip install waitress
 pip install cryptography
+pip install Flask-Mail
 python3 main.py
 ```
 Don't forget to activate the venv virtual environment every time you run this with

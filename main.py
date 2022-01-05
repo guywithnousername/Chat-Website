@@ -1,6 +1,7 @@
 from flask import render_template as rend
 from flask import *
 from flask_mail import *
+import re
 import sqlite3
 from database import *
 from chat import chatpage
@@ -21,11 +22,6 @@ app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 
 @app.route("/",methods= ["GET","POST"])
 def index():
-    msg = Message("Email",
-    sender="mldu@cydu.net",
-    recipients=["mldu@cydu.net"])
-    msg.body = "EEEEEMMMMMAAAAAIIIIILLLLL"
-    mail.send(msg)
     name = request.cookies.get("Username")
     if request.cookies.get("Username") == None:
         return rend("index.html")
@@ -41,6 +37,9 @@ def reg():
         password = request.form.get("password")
         if len(password) < 8:
             return rend("message.html",message="Your password is not strong enough."), 401
+        e_mail = request.form.get("email")
+        if not (re.match("^\S+@\S+\.\S+$",e_mail)):
+            return rend("message.html",message="Invalid email")
         con = get_db()
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -86,6 +85,13 @@ def logout():
         resp.set_cookie('Username', '', expires=0)
         return resp
     return rend("logout.html")
+
+def email(html,recipients=['mldu@cydu.net']):
+    msg = Message("Email",
+    sender="mldu@cydu.net",
+    recipients=recipients)
+    msg.html = html
+    mail.send(msg)
 
 @app.teardown_appcontext
 def close_connection(exception):

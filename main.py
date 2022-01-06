@@ -2,6 +2,8 @@ from flask import render_template as rend
 from flask import *
 from flask_mail import *
 import re
+import random
+import string
 import sqlite3
 from database import *
 from chat import chatpage
@@ -40,25 +42,26 @@ def reg():
         e_mail = request.form.get("email")
         if not (re.match("^\S+@\S+\.\S+$",e_mail)):
             return rend("message.html",message="Invalid email")
+        randomcode = (''.join(random.choice(string.digits) for i in range(1,15)))
         con = get_db()
         con.row_factory = sqlite3.Row
         cur = con.cursor()
         try:
             ret = cur.execute("""
-            INSERT INTO Users (Username, Pass)
-            VALUES (?,?);
-            """,(name.title(),password))
+            INSERT INTO Users (Username, Pass, Random)
+            VALUES (?,?,?);
+            """,(name.title(),password,randomcode))
             con.commit()
         except:
             return rend("message.html",message="That username is taken."),403
         finally:
             con.close()
-        return rend("message.html", message="Great! You created an account. To verify it, go to the login page and log in.")
-    return rend("nameform.html",type='Register')
+        email(rend("confirm.html",link=randomcode),recipients=[e_mail])
+        return rend("message.html", message="Great! You created an account. To verify it, go to your email and click the link.")
+    return rend("nameform.html",type='Register',email=True)
 
 @app.route("/login",methods = ['GET','POST'])
 def login():
-    init_db()
     if request.method == "POST":
         name = request.form.get("name")
         password = request.form.get("password")
@@ -70,6 +73,8 @@ def login():
         if ret == None:
             return rend("message.html",message="The username has been entered incorrectly.")
         else:
+            if ret['Random'] != 'confirmed':
+                return rend("message.html",message="You have not confirmed your account.")
             if ret['Pass'] == password:
                 resp = make_response(redirect("/"))
                 resp.set_cookie("Username",name.title())
@@ -86,12 +91,27 @@ def logout():
         return resp
     return rend("logout.html")
 
+@app.route("/confirm/<name>")
+def confirmname(name):
+    con = get_db()
+    cur = con.cursor()
+    sel = cur.execute("SELECT * FROM Users WHERE Random = ?",(name,)).fetchone()
+    cur.execute("""
+    UPDATE Users
+    SET Random = 'confirmed'
+    WHERE Username = ?
+    """,(sel['Username'],))
+    con.commit()
+    con.close()
+    return sel["Username"]
+
 def email(html,recipients=['mldu@cydu.net']):
     msg = Message("Email",
     sender="mldu@cydu.net",
     recipients=recipients)
     msg.html = html
     mail.send(msg)
+
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -103,5 +123,6 @@ def close_connection(exception):
 
 if __name__ == "__main__":
     from waitress import serve
+    init_db()
     print("Serving at http://192.168.86.23:8000/ . . .")
     serve(app, host="0.0.0.0", port=8000)

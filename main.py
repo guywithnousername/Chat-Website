@@ -108,7 +108,7 @@ def confirmname(name):
     """,(sel['Username'],))
     con.commit()
     con.close()
-    return sel["Username"]
+    return rend("message.html",message="Your account has been confirmed! Now login to your account.")
 
 def email(html,recipients=['mldu@cydu.net']):
     msg = Message("Email",

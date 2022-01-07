@@ -12,15 +12,16 @@ from user import userpage
 app = Flask(__name__)
 app.register_blueprint(chatpage)
 app.register_blueprint(userpage)
+app.config['TESTING'] = True
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'mldu@cydu.net'
 app.config['MAIL_PASSWORD'] = 'LTb#s7EC8SRl$pPpcD'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 mail = Mail(app)
 DATABASE = "database.db"
-app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 
 @app.route("/",methods= ["GET","POST"])
 def index():
@@ -96,6 +97,8 @@ def confirmname(name):
     con = get_db()
     cur = con.cursor()
     sel = cur.execute("SELECT * FROM Users WHERE Random = ?",(name,)).fetchone()
+    if (sel == None):
+        return rend("message.html",message="The code was entered incorrectly.")
     cur.execute("""
     UPDATE Users
     SET Random = 'confirmed'

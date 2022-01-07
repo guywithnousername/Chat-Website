@@ -97,6 +97,8 @@ def confirmname(name):
     con = get_db()
     cur = con.cursor()
     sel = cur.execute("SELECT * FROM Users WHERE Random = ?",(name,)).fetchone()
+    if (name == "confirmed"):
+        return rend("message.html",message="Stop trying to target weaknesses in the code!")
     if (sel == None):
         return rend("message.html",message="The code was entered incorrectly.")
     cur.execute("""

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Messages</h1>
+<br><br>
+{% if msg %}
+<ul>
+    {% for message in msg %}
+    <li>{{ message|safe}}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>You do not have any messages.</p>
+{% endif %}
+{% endblock %}

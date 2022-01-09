@@ -12,7 +12,7 @@ from user import userpage
 app = Flask(__name__)
 app.register_blueprint(chatpage)
 app.register_blueprint(userpage)
-app.config['TESTING'] = True
+app.config['TESTING'] = False
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'mldu@cydu.net'

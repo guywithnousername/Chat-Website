@@ -21,6 +21,8 @@ def viewuser(name):
 @userpage.route("/change/profile",methods = ['GET','POST'])
 def changeprof():
     name = request.cookies.get("Username")
+    if name == None:
+        return rend("message.html",message="You aren't logged in.")
     con = database.get_db()
     cur = con.cursor()
     bio = cur.execute("SELECT * FROM Users WHERE Username = ?",(name,)).fetchone()["Bio"]
@@ -39,6 +41,8 @@ def changeprof():
 @userpage.route("/change/password",methods = ['GET','POST'])
 def changepass():
     name = request.cookies.get("Username")
+    if name == None:
+        return rend("message.html",message="You aren't logged in.")
     if request.method == "POST":
         password = database.query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
         oldpass = request.form.get("pass")
@@ -54,3 +58,21 @@ def changepass():
         con.close()
         return rend("message.html",message="Your password was changed successfully!")
     return rend("changepass.html")
+
+@userpage.route("/newfriend",methods=['GET','POST'])
+def addfriend():
+    name = request.cookies.get("Username")
+    if name == None:
+        return rend("message.html",message="You aren't logged in.")
+    if request.method == 'POST':
+        con = database.get_db()
+        cur = con.cursor()
+        friend = request.form.get("friend").title()
+        sel = cur.execute("SELECT * FROM Users WHERE Username = ?",(friend,)).fetchone()
+        if not sel:
+            return rend("message.html",message="The user was not found.")
+        cur.execute("INSERT INTO Friends (User, Friend) VALUES (?, ?)",(name,friend))
+        cur.execute("INSERT INTO Friends (User, Friend) VALUES (?, ?)",(friend,name))
+        con.commit()
+        con.close()
+    return rend("newfriend.html")

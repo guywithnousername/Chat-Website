@@ -12,6 +12,7 @@ This website uses:
 - Cryptography (import cryptography.fernet)
 - Waitress (from waitress import serve)
 - Flask Mail (from flask_mail import *)
+- Javascript Confetti (from [here](https://github.com/loonywizard/js-confetti))
 in a .venv virtual environment.
 
 To download them on Mac, do: (you also need to have python3)

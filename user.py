@@ -1,6 +1,7 @@
 import database
 from flask import *
 from flask import render_template as rend
+from chat import mailboxmsg as mailto
 
 userpage = Blueprint('userpage',__name__,template_folder="templates",static_folder="static")
 
@@ -71,6 +72,7 @@ def addfriend():
         sel = cur.execute("SELECT * FROM Users WHERE Username = ?",(friend,)).fetchone()
         if not sel:
             return rend("message.html",message="The user was not found.")
+        mailto(friend,"<h2>Friend request</h2><br><p>A user wants to friend you</p>")
         cur.execute("INSERT INTO Friends (User, Friend) VALUES (?, ?)",(name,friend))
         cur.execute("INSERT INTO Friends (User, Friend) VALUES (?, ?)",(friend,name))
         con.commit()

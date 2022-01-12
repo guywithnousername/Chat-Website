@@ -79,3 +79,9 @@ def newroom():
             con.close()
         return rend("message.html",message="The room was successfully created.")
     return rend("nameform.html",type="Create a new room")
+
+def mailboxmsg(recipient,content):
+    con = database.get_db()
+    cur = con.cursor()
+    cur.execute("INSERT INTO UserMessages (Recipient,MSG) Values (?,?)",(recipient,content))
+    con.commit()

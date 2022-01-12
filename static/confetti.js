@@ -5,4 +5,9 @@
 
 const jsConfetti = new JSConfetti()
 
+jsConfetti.addConfetti({
+    confettiRadius: 6,
+    confettiNumber: 500,
+})
+
 jsConfetti.addConfetti()

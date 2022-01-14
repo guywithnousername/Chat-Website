@@ -35,3 +35,8 @@ input:valid+span::after {
     content:'\2713';
     color: #04aa6d;
 }
+.border {
+    padding: 0.25em;
+	margin: 0.125em;
+    border: 1px solid black;
+}

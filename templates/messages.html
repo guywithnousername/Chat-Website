@@ -5,7 +5,7 @@
 {% if msg %}
 <ul>
     {% for message in msg %}
-    <li>{{ message|safe}}</li>
+    <li class="border">{{ message|safe}}</li>
     {% endfor %}
 </ul>
 {% else %}

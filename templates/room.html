@@ -9,6 +9,7 @@
 {% if messages %}
 <ul>
 {% for msg,username,time in messages %}
+<div class="border">
 {% if (username == "Unnamed") %}
 <p>Unnamed-</p>
 {% else %}
@@ -17,6 +18,7 @@
 <p>{{ time }}</p>
 <li> {{ msg }}</li>
 <br>
+</div>
 {% endfor %}
 {% else %}
 <p>It looks like this room doesn't have any messages. Be the first to say something!</p>

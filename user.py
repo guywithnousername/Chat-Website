@@ -75,9 +75,7 @@ def addfriend():
         if not sel:
             return rend("message.html",message="The user was not found.")
         randomcode = (''.join(random.choice(string.digits) for i in range(1,15)))
-        mailto(friend,f"""<h2>Friend request</h2>
-        <br><p>A user wants to friend you</p><br>
-        <a href=/confirmfriend/{randomcode}>Click here to accept.</a>""")
+        mailto(friend,rend("friendmsg.html",code=randomcode))
         cur.execute("INSERT INTO Friends (User, Friend, Code) VALUES (?, ?, ?)",(name,friend,randomcode))
         cur.execute("INSERT INTO Friends (User, Friend, Code) VALUES (?, ?, ?)",(friend,name,randomcode))
         con.commit()

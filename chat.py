@@ -85,3 +85,20 @@ def mailboxmsg(recipient,content):
     cur = con.cursor()
     cur.execute("INSERT INTO UserMessages (Recipient,MSG) Values (?,?)",(recipient,content))
     con.commit()
+
+@chatpage.route("/confirmfriend/<code>")
+def confirm(code):
+    name = request.cookies.get("Username")
+    if code == "confirmed":
+        return rend("message.html",message="Are you a hacker? If so, stop.")
+    if not name:
+        return rend("message.html",message="You aren't logged in.")
+    con = database.get_db()
+    cur = con.cursor()
+    ret = cur.execute("SELECT * FROM Friends WHERE User = ? AND Code = ?",(name,code))
+    if not ret:
+        return rend("message.html",message="Wrong link.")
+    cur.execute("UPDATE Friends SET Code = 'confirmed' WHERE Code = ?",(code,))
+    con.commit()
+    con.close()
+    return rend("message.html",message="Successfully friended!")

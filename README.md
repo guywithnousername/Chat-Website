@@ -15,6 +15,8 @@ This website uses:
 - Javascript Confetti (from [here](https://github.com/loonywizard/js-confetti))
 in a .venv virtual environment.
 
+# Running
+## Downloading modules
 To download them on Mac, do: (you also need to have python3)
 ```
 python3 -m venv .venv
@@ -35,6 +37,7 @@ pip install cryptography
 pip install Flask-Mail
 python3 main.py
 ```
+## Virtual Environment
 Don't forget to activate the venv virtual environment every time you run this with
 ```
 . .venv/bin/activate
@@ -43,3 +46,11 @@ or
 ```
 .venv/Scripts/activate
 ```
+## Actually Running It
+To run this, do 
+```
+python3 main.py
+```
+Then go to `localhost:8000` or `192.168.86.23:8000` 
+
+and you should see the website.

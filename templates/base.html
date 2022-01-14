@@ -17,11 +17,11 @@
             <a href="/logout" class="signedin">Log out</a>
             <p class="signedin"></p>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+        <script src="/static/confetti.js" type="module"></script>
         <div style="padding-left:16px">
         {% block content %}{% endblock %}
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
         <script src="/static/nav.js"></script>
-        <!-- <script src="/static/confetti.js" type="module"></script> -->
     </body>
 </html>

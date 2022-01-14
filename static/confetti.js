@@ -9,5 +9,6 @@ jsConfetti.addConfetti({
     confettiRadius: 6,
     confettiNumber: 500,
 })
-
-jsConfetti.addConfetti()
+function confetti() {
+    jsConfetti.addConfetti()
+}

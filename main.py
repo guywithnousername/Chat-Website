@@ -29,7 +29,10 @@ def index():
     if request.cookies.get("Username") == None:
         return rend("index.html")
     else:
-        return rend("user.html",name=name)
+        con = get_db()
+        cur = con.cursor()
+        friends = [x["Friend"] for x in query_db("SELECT * FROM Friends WHERE User = ? AND Code = 'confirmed'",(name,))]
+        return rend("user.html",name=name,friends=friends)
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():

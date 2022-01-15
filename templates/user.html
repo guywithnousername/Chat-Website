@@ -9,4 +9,14 @@
     <a href="/newfriend">Add a friend</a><br><br>
     <a href="/messages">View your mailbox</a>
 </div>
+<h1>My friends</h1>
+{% if friends %}
+<ul>
+{% for friend in friends %}
+<li><a href={{ "/users/"+friend }}>{{ friend }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<p>You currently don't have any friends.</p>
+{% endif %}
 {% endblock %}

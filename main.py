@@ -31,7 +31,7 @@ def index():
     else:
         con = get_db()
         cur = con.cursor()
-        friends = [x["Friend"] for x in query_db("SELECT * FROM Friends WHERE User = ? AND Code = 'confirmed'",(name,))]
+        friends = [x["Friend1"] if x["Friend1"] != name else x["Friend2"] for x in query_db("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?) AND Code = 'confirmed'",(name,name))]
         return rend("user.html",name=name,friends=friends)
 
 @app.route("/register",methods = ['GET','POST'])

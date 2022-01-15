@@ -95,7 +95,7 @@ def confirm(code):
         return rend("message.html",message="You aren't logged in.")
     con = database.get_db()
     cur = con.cursor()
-    ret = cur.execute("SELECT * FROM Friends WHERE User = ? AND Code = ?",(name,code))
+    ret = cur.execute("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?) AND Code = ?",(name,name,code))
     if not ret:
         return rend("message.html",message="Wrong link.")
     cur.execute("UPDATE Friends SET Code = 'confirmed' WHERE Code = ?",(code,))

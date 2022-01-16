@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ name }}</h1>
+<div class="border">
+    {% if friend %}
+    <form method="post"><input type="submit" value="&#10060;" style="float: left;"></form>
+    {% endif %}
+    <h1 style="display: inline-block;">{{ name }}</h1>
+</div>
 <h2>Bio</h2>
 <p>{{ bio }}</p>
 {% endblock %}

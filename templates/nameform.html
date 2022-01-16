@@ -6,11 +6,11 @@
     <label for = "name"> Name: </label><br>
     <input type="text" id="name" name="name" required><span></span><br>
     <label for="pass"> Password: </label><br>
-    <input type="password" id="pass" name="password" minlength="8" placeholder="least 8 characters" required><span></span><br><br>
+    <input type="password" id="pass" name="password" minlength="8" placeholder="least 8 characters" required><span></span><br>
     {% if email %}
     <label for = "email"> Email(We will not save this): </label><br>
     <input type="email" id="email" name="email" required><span></span><br>
     {% endif %}
-    <input type="submit" value="Submit">
+    <br><input type="submit" value="Submit">
 </form>
 {% endblock %}

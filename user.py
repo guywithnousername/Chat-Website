@@ -7,7 +7,7 @@ from chat import mailboxmsg as mailto
 
 userpage = Blueprint('userpage',__name__,template_folder="templates",static_folder="static")
 
-@userpage.route("/users/<name>")
+@userpage.route("/users/<name>",methods=['GET','POST'])
 def viewuser(name):
     con = database.get_db()
     cur = con.cursor()
@@ -19,7 +19,13 @@ def viewuser(name):
     username = request.cookies.get("Username")
     if username == name:
         return redirect("/")
-    return render_template("userpage.html",name=name,bio=sel["Bio"])
+    friend = cur.execute("SELECT * FROM Friends WHERE ((Friend1 = ? AND Friend2 = ?) OR (Friend2 = ? AND Friend1 = ?)) AND Code = 'confirmed'",(username,name,username,name)).fetchone()
+    if request.method == "POST" and friend:
+        cur.execute("DELETE FROM Friends WHERE ((Friend1 = ? AND Friend2 = ?) OR (Friend2 = ? AND Friend1 = ?)) AND Code = 'confirmed'",(username,name,username,name))
+        con.commit()
+        con.close()
+        return rend("message.html",message = "That friend was unfriended.")
+    return rend("userpage.html",name=name,bio=sel["Bio"],friend=friend)
 
 @userpage.route("/change/profile",methods = ['GET','POST'])
 def changeprof():

@@ -13,7 +13,8 @@
 {% if friends %}
 <ul>
 {% for friend in friends %}
-<li><a href={{ "/users/"+friend }}>{{ friend }}</a></li>
+<li><div class="border"><a href={{ "/users/"+friend }}>{{ friend }}</a>
+</div></li>
 {% endfor %}
 </ul>
 {% else %}

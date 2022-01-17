@@ -83,7 +83,8 @@ def newroom():
 def mailboxmsg(recipient,content):
     con = database.get_db()
     cur = con.cursor()
-    cur.execute("INSERT INTO UserMessages (Recipient,MSG) Values (?,?)",(recipient,content))
+    time = int(datetime.now().strftime("%s"))
+    cur.execute("INSERT INTO UserMessages (Recipient,MSG,Time) Values (?,?,?)",(recipient,content,time))
     con.commit()
 
 @chatpage.route("/confirmfriend/<code>")

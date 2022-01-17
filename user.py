@@ -95,6 +95,6 @@ def messages():
         return rend("message.html",message="You aren't logged in.")
     con = database.get_db()
     cur = con.cursor()
-    ret = cur.execute("SELECT * FROM UserMessages WHERE Recipient = ?",(name,)).fetchall()
+    ret = cur.execute("SELECT * FROM UserMessages WHERE Recipient = ? ORDER BY Time DESC",(name,)).fetchall()
     msg = [x["MSG"] for x in ret]
     return rend("messages.html",msg=msg)

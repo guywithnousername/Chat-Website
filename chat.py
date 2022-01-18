@@ -84,7 +84,7 @@ def mailboxmsg(recipient,content):
     con = database.get_db()
     cur = con.cursor()
     time = int(datetime.now().strftime("%s"))
-    cur.execute("INSERT INTO UserMessages (Recipient,MSG,Time) Values (?,?,?)",(recipient,content,time))
+    cur.execute("INSERT INTO UserMessages (Recipient,MSG,Time,Read) Values (?,?,?,0)",(recipient,content,time))
     con.commit()
 
 @chatpage.route("/confirmfriend/<code>")

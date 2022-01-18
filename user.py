@@ -96,5 +96,16 @@ def messages():
     con = database.get_db()
     cur = con.cursor()
     ret = cur.execute("SELECT * FROM UserMessages WHERE Recipient = ? ORDER BY Time DESC",(name,)).fetchall()
-    msg = [x["MSG"] for x in ret]
+    msg = [(x["MSG"],x["Read"],str(x["ID"])) for x in ret]
     return rend("messages.html",msg=msg)
+
+@userpage.route("/markread/<code>")
+def markread(code):
+    con = database.get_db()
+    cur = con.cursor()
+    ret = cur.execute("SELECT * FROM UserMessages WHERE ID = ?",(code,)).fetchone()
+    if ret:
+        cur.execute("UPDATE UserMessages SET Read = 1 WHERE ID = ?",(code,))
+        con.commit()
+        con.close()
+    return rend("message.html",message="You aren't supposed to be here.")

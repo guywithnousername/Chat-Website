@@ -4,8 +4,15 @@
 <br><br>
 {% if msg %}
 <ul>
-    {% for message in msg %}
+    {% for message, isread, ID in msg %}
+    {% if isread %}
+    <div style="opacity: 25%;">
+    {% else %}
+    <div>
+    <button type="button" style="float: right;" onclick={{ "fetch('markread/" + ID + "');window.location.reload(1)" }}>Mark as read</button>
+    {% endif %}
     <li class="border">{{ message|safe}}</li>
+    </div>
     {% endfor %}
 </ul>
 {% else %}

@@ -1,0 +1,4 @@
+Flask
+waitress
+cryptography
+Flask-Mail

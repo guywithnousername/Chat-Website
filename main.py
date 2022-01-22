@@ -3,6 +3,7 @@ from flask import *
 from flask_mail import *
 import re
 import random
+import os
 import string
 import sqlite3
 from database import *
@@ -132,5 +133,5 @@ def close_connection(exception):
 if __name__ == "__main__":
     from waitress import serve
     init_db()
-    print("Serving at http://192.168.86.23:8000/ . . .")
-    serve(app, host="0.0.0.0", port=33507)
+    port = int(os.environ.get('PORT', 5000))
+    serve(app, host="0.0.0.0", port=port)

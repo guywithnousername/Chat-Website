@@ -57,8 +57,9 @@ def reg():
             VALUES (?,?,?);
             """,(name.title(),password,randomcode))
             con.commit()
-        except:
-            return rend("message.html",message="That username is taken."),403
+        except Exception as e:
+            print(e)
+            return rend("message.html",message="That username is taken. Error: " + str(e)),403
         finally:
             con.close()
         email(rend("confirm.html",link=randomcode),recipients=[e_mail])

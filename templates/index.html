@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-<p> Hello! </p>
-<br>
-<a href='/register'>Go here to create an account.</a>
-<br><br>
-<a href='/login'>Go here to login.</a>
-<br><br>
-<a href='/roomselect'>Check out our chatroom here.</a>
+<div style="display:block;background-color:gray">
+	<h1> Welcome to my chat website!</h1><br>
+	<p>If you have no account, you can <a href="/register">sign up</a>! It's free! If you already have an account you can <a href="/login">login</a>.</p>
+	<p>If you have an account, you can chat with your friends, earn coins, and use them to play games. (Games are currently in development)</p>
+</div>
 {% endblock %}

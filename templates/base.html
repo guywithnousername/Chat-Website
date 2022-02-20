@@ -5,7 +5,8 @@
         <meta name="description" content="A test flask website example which has a system for logging in,registering,and messaging">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name=" theme-color" content="#04aa6d">
-        <title>Website</title>
+        <title>Chat-Website</title>
+	<link rel="stylesheet" href="/static/ui.css">
         <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
@@ -17,9 +18,12 @@
             <a href="/logout" class="signedin">Log out</a>
             <a class="signedin" href="#"></a>
         </div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="/static/ui.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
         <!-- <script src="/static/confetti.js" type="module"></script> -->
-        <div class="content">
+        <div class="content" style ="height:100%">
         {% block content %}{% endblock %}
         </div>
         <script src="/static/nav.js"></script>

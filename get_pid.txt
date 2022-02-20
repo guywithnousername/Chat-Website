@@ -1,0 +1,11 @@
+To get the process id of a nohup run, do:
+ps aux | grep python3
+then search for the process that says:
+python3 main.py
+,then do
+kill -9 <process id that you got>
+. This should stop the nohup thing.
+
+To do a nohup run, do:
+nohup python3 main.py &
+

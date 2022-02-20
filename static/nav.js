@@ -21,11 +21,11 @@ function getCookie(cname) {
 }
 function checkUsername() {
     let username= getCookie("Username")
-    var forms = document.getElementsByClassName("userform")
-    var text = document.getElementsByClassName("signedin")
+    var forms = $(".userform")
+    var text = $(".signedin")
     if (username!=""){
         for (const x of forms) {
-            x.innerHTML = ""
+            x.remove()
         }
         text[1].innerHTML = getCookie("Username")
         text[0].innerHTML = "Log out"
@@ -33,7 +33,7 @@ function checkUsername() {
         forms[0].innerHTML = "Register"
         forms[1].innerHTML = "Login"
         for (const x of text) {
-          x.innerHTML = ""
+          x.remove()
         }
     }
 }

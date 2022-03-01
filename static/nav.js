@@ -1,3 +1,6 @@
+function htmlentities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 function setCookie(name,val,days) {
     const d = new Date();
     d.setTime(d.getTime() + (days*24*60*60*1000));
@@ -20,20 +23,20 @@ function getCookie(cname) {
     return "";
 }
 function checkUsername() {
-    let username= getCookie("Username")
-    var forms = document.getElementsByClassName("userform")
-    var text = document.getElementsByClassName("signedin")
+    let username= htmlentities(getCookie("Username"))
+    var forms = $(".userform")
+    var text = $(".signedin")
     if (username!=""){
         for (const x of forms) {
-            x.innerHTML = ""
+            x.remove()
         }
-        text[1].innerHTML = getCookie("Username")
+        text[1].innerHTML = htmlentities(getCookie("Username"))
         text[0].innerHTML = "Log out"
     } else {
         forms[0].innerHTML = "Register"
         forms[1].innerHTML = "Login"
         for (const x of text) {
-          x.innerHTML = ""
+          x.remove()
         }
     }
 }

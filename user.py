@@ -16,6 +16,10 @@ def viewuser(name):
     sel = cur.fetchone()
     if sel == None:
         return rend("message.html",message="That user was not found.")
+    coins = database.query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)
+    if not coins: coins = 0
+    if coins: coins = coins["Num"]
+    friends = [x["Friend1"] if x["Friend1"] != name else x["Friend2"] for x in database.query_db("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?) AND Code = 'confirmed'",(name,name))]
     username = request.cookies.get("Username")
     if username == name:
         return redirect("/")
@@ -25,7 +29,7 @@ def viewuser(name):
         con.commit()
         con.close()
         return rend("message.html",message = "That friend was unfriended.")
-    return rend("userpage.html",name=name,bio=sel["Bio"],friend=friend)
+    return rend("userpage.html",name=name,bio=sel["Bio"],friend=friend,coins=coins,friends=friends)
 
 @userpage.route("/change/profile",methods = ['GET','POST'])
 def changeprof():
@@ -109,3 +113,40 @@ def markread(code):
         con.commit()
         con.close()
     return rend("message.html",message="You aren't supposed to be here.")
+@userpage.route("/addcoin/<user>")
+def addcoin(user):
+    name = request.cookies.get("Username")
+    if not name:
+        return rend("message.html",message="You aren't supposed to be here.")
+    sel = database.query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)
+    con = database.get_db()
+    cur = con.cursor()
+    if not sel:
+        cur.execute("INSERT INTO Coins (Username, Num, Box) VALUES (?, 1, 1)",(name,))
+        con.commit()
+    else:
+        sel = int(sel["Num"]) + 1
+        cur.execute("UPDATE Coins SET Num = ? WHERE Username = ?",(sel,name))
+        con.commit()
+    cur.execute("UPDATE Coins SET Box = 0 WHERE Username = ?",(name,))
+    con.commit()
+    con.close()
+    return rend("message.html",message="You aren't supposed to be here.")
+   
+@userpage.route("/play")
+def playgame():
+    name = request.cookies.get("Username")
+    if not name:
+        return rend("message.html",message="You aren't logged in.")
+    sel = database.query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)
+    if not sel or int(sel["Num"]) < 30:
+        return rend("message.html",message="You do not have enough coins.")
+    else:
+        con = database.get_db()
+        cur = con.cursor()
+        sel = int(sel["Num"])
+        sel -= 30
+        cur.execute("UPDATE Coins SET Num = ? WHERE Username = ?",(sel,name))
+        con.commit()
+    con.close()
+    return rend("play.html")

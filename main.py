@@ -6,6 +6,9 @@ import random
 import os
 import string
 import sqlite3
+import datetime
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 from database import *
 from chat import chatpage
 from user import userpage
@@ -24,6 +27,20 @@ app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 mail = Mail(app)
 DATABASE = "database.db"
 
+
+def check_box():
+    with app.app_context():
+      con = get_db()
+      cur = con.cursor()
+      now = datetime.datetime.now()
+      if (now.minute == 0):
+        if (now.hour % 2 == 1):
+            cur.execute("UPDATE Coins SET Box = 1")
+        else:
+            cur.execute("UPDATE Coins SET Box = 0")
+        con.commit()
+
+
 @app.route("/",methods= ["GET","POST"])
 def index():
     name = request.cookies.get("Username")
@@ -32,8 +49,19 @@ def index():
     else:
         con = get_db()
         cur = con.cursor()
+        now = datetime.datetime.now()
+        cur.execute("")
+        coins = query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)
+        if not coins: coins = 0
+        else: coins = coins["Num"]
+        bio = query_db("SELECT * FROM Users WHERE Username = ?",(name,),one=True)
+        if not bio: bio = "You do not have a bio."
+        else: bio = bio["Bio"]
         friends = [x["Friend1"] if x["Friend1"] != name else x["Friend2"] for x in query_db("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?) AND Code = 'confirmed'",(name,name))]
-        return rend("user.html",name=name,friends=friends)
+        box = query_db("SELECT Box FROM Coins WHERE Username = ?",(name,),one=True)
+        if not box: box = False
+        else: box = bool(box["Box"])
+        return rend("user.html",name=name,friends=friends,coins=coins,bio=bio,isbox=box)
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():
@@ -59,8 +87,10 @@ def reg():
             con.commit()
         except Exception as e:
             print(e)
-            return rend("message.html",message="That username is taken. Error: " + str(e)),403
+            return rend("message.html",message="That username is taken."),403
         finally:
+            cur.execute("INSERT INTO Coins (Username, Num, Box) VALUES (?, 1, 1)",(name.title(),))
+            con.commit()
             con.close()
         email(rend("confirm.html",link=randomcode),recipients=[e_mail])
         return rend("message.html", message="Great! You created an account. To verify it, go to your email and click the link.")
@@ -134,5 +164,9 @@ def close_connection(exception):
 if __name__ == "__main__":
     from waitress import serve
     init_db()
-    port = int(os.environ.get('PORT', 5000))
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=check_box, trigger="interval", seconds=60)
+    scheduler.start()
+    atexit.register(lambda: scheduler.shutdown())
+    port = int(os.environ.get('PORT', 8080))
     serve(app, host="0.0.0.0", port=port)

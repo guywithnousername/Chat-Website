@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+	<meta charset="utf-8">
         <meta name="keywords" content="Flask,Server,Example,Login,Register,Messaging">
         <meta name="description" content="A test flask website example which has a system for logging in,registering,and messaging">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name=" theme-color" content="#04aa6d">
-        <title>Website</title>
+	<title>Chat Website - {% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="/static/ui.css">
         <link rel="stylesheet" href="/static/style.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     </head>
     <body>
         <div class="topnav">
@@ -17,11 +20,15 @@
             <a href="/logout" class="signedin">Log out</a>
             <a class="signedin" href="#"></a>
         </div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="/static/ui.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
         <!-- <script src="/static/confetti.js" type="module"></script> -->
-        <div class="content">
+        <div class="content" style ="height:100%">
         {% block content %}{% endblock %}
         </div>
         <script src="/static/nav.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
     </body>
 </html>

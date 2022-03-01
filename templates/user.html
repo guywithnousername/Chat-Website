@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>Hello {{ name }}! </p><br>
+<div style="display: grid;
+    grid-template-columns:1fr 1fr;
+    grid-gap:20px;">
+	<h1>{{ name }} </h1>
+	<div style="right:5;display:block">
+		<h1><img src="static/coinimg.png" alt="An image of a coin." width="30" height="30">{{ coins }}</h1>
+	</div>
+</div><br>
+<h1>Bio</h1>
+<pre>{{ bio }}</pre>
 <div class="sidenav">
     <a href="/newroom">Create a room</a><br><br>
     <a href="/change/password">Reset password</a><br><br>
@@ -9,6 +18,12 @@
     <a href="/newfriend">Add a friend</a><br><br>
     <a href="/messages">View your mailbox</a>
 </div>
+<h2>Play a game</h2>
+{% if coins >= 30 %}
+<p>You have enough coins to play a <a href="/play">game</a>!</p>
+{% else %}
+<p>It looks like you don't have enough coins.</p>
+{% endif %}
 <h1>My friends</h1>
 {% if friends %}
 <ul>
@@ -20,4 +35,16 @@
 {% else %}
 <p>You currently don't have any friends.</p>
 {% endif %}
+<br>
+{% if isbox %}
+<h1>Mystery Box</h1>
+	<img id = "m_box" src="/static/box.png" alt="A picture of a box with a question mark on it." width="255" height="256">
+<div id = "dialog" title="One More Coin">
+	<p>You just earned one coin!</p>
+	<p>Please come back in 2 hours to claim another coin!</p>
+	<p>Thanks for supporting my project!</p>
+</div>
+<script src="/static/box.js"></script>
+{% endif %}
 {% endblock %}
+{% block title %}Home{% endblock %}

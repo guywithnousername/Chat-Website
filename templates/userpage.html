@@ -1,11 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="border">
+    <div style="display: grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-gap:20px;">
     {% if friend %}
-    <form method="post"><input type="submit" value="&#10060;" style="float: left;"></form>
+    <form method="post"><input type="submit" value="&#10060;"></form>
     {% endif %}
-    <h1 style="display: inline-block;">{{ name }}</h1>
+    <h1>{{ name }}</h1>
+    <div style="right:5;display:block">
+        <h1><img src="/static/coinimg.png" alt="An image of a coin."> {{ coins }}</h1>
+    </div>
+    </div>
 </div>
 <h2>Bio</h2>
-<p>{{ bio }}</p>
+<pre>{{ bio }}</pre>
+<h2>Friends</h2>
+<ul>
+    {% if friends  %}
+    {% for f in friends%}
+    <li class ="border"><a href={{ "/users/"+f }}>{{ f }}</a></li>
+    {% endfor %}
+    {% else %}
+    <p>This user does not have any friends</p>
+    {% endif %}
+</ul>
 {% endblock %}
+{% block title %}{{ name + "'s profile" }}{% endblock %}

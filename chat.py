@@ -14,6 +14,8 @@ def chat(room):
     con = database.get_db()
     con.row_factory = sqlite3.Row
     cur = con.cursor()
+    if not request.cookies.get("Room"):
+        return rend("message.html",message="You cannot access this room.")
     encryptedroomname = bytes(request.cookies.get("Room"),'utf-8')
     decodedroom = fernet.decrypt(encryptedroomname).decode()
     if (room != decodedroom):

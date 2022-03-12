@@ -65,6 +65,9 @@ def index():
 
 @app.route("/register",methods = ['GET','POST'])
 def reg():
+    name = request.cookies.get("Username")
+    if name:
+        return rend("message.html",message = "Log out first")
     if request.method == "POST":
         name = request.form.get("name")
         if ' ' in name:
@@ -98,6 +101,9 @@ def reg():
 
 @app.route("/login",methods = ['GET','POST'])
 def login():
+    name = request.cookies.get("Username")
+    if name:
+        return rend("message.html",message="Log out first.")
     if request.method == "POST":
         name = request.form.get("name")
         password = request.form.get("password")
@@ -121,6 +127,9 @@ def login():
 
 @app.route("/logout",methods = ['GET','POST'])
 def logout():
+    name = request.cookies.get("Username")
+    if name == None:
+        return rend("message.html",message = "You aren't logged in.")
     if request.method == "POST":
         resp = make_response(rend("message.html",message="You have been successfully logged out"))
         resp.set_cookie('Username', '', expires=0)

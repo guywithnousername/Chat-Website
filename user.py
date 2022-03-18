@@ -81,6 +81,9 @@ def addfriend():
         con = database.get_db()
         cur = con.cursor()
         friend = request.form.get("friend").title()
+        f = database.query_db("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?)",(friend,friend))
+        if f:
+            return rend("message.html",message="You either already have a friend request to or from that user, or already are friends with him or her.")
         sel = cur.execute("SELECT * FROM Users WHERE Username = ?",(friend,)).fetchone()
         if not sel:
             return rend("message.html",message="The user was not found.")

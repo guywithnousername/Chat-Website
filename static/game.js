@@ -2,6 +2,7 @@ const config = {
     type: Phaser.AUTO,
     width: 480,
     height: 480,
+    backgroundColor: "#497f3f",
     parent: 'phaser-game',
     physics: {
         default: 'arcade',
@@ -26,13 +27,15 @@ function preload() {
 }
 function create() {
 	map = this.make.tilemap({ key: 'map' });
+	
 	let sand = map.addTilesetImage('sand','sand');
-	let soil = map.addTilesetImage('plowed_soil','soil');
 	let sandlayer = map.createLayer('Sand',sand, 0, 0);
+	let soil = map.addTilesetImage('plowed_soil','soil');
 	let soillayer = map.createLayer('Soil',soil,0,0);
 	let fences = map.addTilesetImage('fences','fences');
 	let fencelayer = map.createLayer('Fences',fences,0,0);
-	//bug: sand doesn't render
+
+	map.setCollisionByExclusion(-1,true,fencelayer);
 }
 function update() {
 

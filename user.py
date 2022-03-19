@@ -4,6 +4,7 @@ from flask import render_template as rend
 import random
 import string
 from chat import mailboxmsg as mailto
+import htmlentities as h
 
 userpage = Blueprint('userpage',__name__,template_folder="templates",static_folder="static")
 
@@ -115,7 +116,7 @@ def newMessages():
     if request.method == 'POST':
         to = request.form.get("to").title()
         msg = request.form.get("msg")
-        mailto(to, msg)
+        mailto(to, h.encode(msg))
         return rend("message.html", message = "Message sent successfully.")
     return rend("newMessage.html", msg="Type your message here")
 

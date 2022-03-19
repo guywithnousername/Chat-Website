@@ -111,7 +111,7 @@ def newMessages():
     name = request.cookies.get("Username")
     if not name:
         return rend("message.html",message="You aren't logged in.")
-    msg = "Type your message here"
+    
     if request.method == 'POST':
         to = request.form.get("to").title()
         msg = request.form.get("msg")

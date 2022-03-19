@@ -17,26 +17,23 @@ in a .venv virtual environment.
 
 # Running
 ## Downloading modules
+
 To download them on Mac, do: (you also need to have python3)
 ```
 python3 -m venv .venv
 . .venv/bin/activate
-pip install Flask
-pip install waitress
-pip install cryptography
-pip install Flask-Mail
+pip install -r requirements.txt
 python3 main.py
 ```
+
 To download them on Windows, do:
 ```
 py -3 -m venv .venv
 .venv\Scripts\activate
-pip install Flask
-pip install waitress
-pip install cryptography
-pip install Flask-Mail
+pip install -r requirements.txt
 python3 main.py
 ```
+
 ## Virtual Environment
 Don't forget to activate the venv virtual environment every time you run this with
 ```
@@ -51,6 +48,6 @@ To run this, do
 ```
 python3 main.py
 ```
-Then go to `localhost:8000` or `192.168.86.23:8000` 
+Then go to `localhost:8000`
 
 and you should see the website.

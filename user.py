@@ -111,11 +111,11 @@ def newMessages():
     name = request.cookies.get("Username")
     if not name:
         return rend("message.html",message="You aren't logged in.")
-	msg = "Type your message here"
+    msg = "Type your message here"
     if request.method == 'POST':
-		to = request.form.get("to").title()
+        to = request.form.get("to").title()
         msg = request.form.get("msg")
-	    mailto(to, msg)
+        mailto(to, msg)
     return rend("newMessage.html", msg=msg)
 
 @userpage.route("/markread/<code>")

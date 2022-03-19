@@ -117,7 +117,7 @@ def newMessages():
         msg = request.form.get("msg")
         mailto(to, msg)
         return rend("message.html", message = "Message sent successfully.")
-    return rend("newMessage.html", msg=msg)
+    return rend("newMessage.html", msg="Type your message here")
 
 @userpage.route("/markread/<code>")
 def markread(code):

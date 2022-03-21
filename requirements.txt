@@ -18,5 +18,5 @@ pytz-deprecation-shim==0.1.0.post0
 six==1.16.0
 tzdata==2021.5
 tzlocal==4.1
-waitress==2.0.0
+waitress==2.1.1
 Werkzeug==2.0.2

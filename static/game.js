@@ -38,8 +38,9 @@ function create() {
 	let fences = map.addTilesetImage('fences','fences');
 	let fencelayer = map.createLayer('Fences',fences,0,0);
 
-	map.setCollision(fencelayer);
+	map.setCollisionByExclusion([-1],true, false,fencelayer);
 	this.cube = this.physics.add.sprite(240,240,"cube");
+	this.physics.add.collider(this.cube, fencelayer); // This fixed the problem!
 
 	this.cursors = this.input.keyboard.createCursorKeys();
 }

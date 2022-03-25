@@ -115,8 +115,8 @@ def newMessages():
     
     if request.method == 'POST':
         to = request.form.get("to").title()
-        msg = request.form.get("msg")
-        mailto(to, h.encode(msg))
+        msg = h.encode(request.form.get("msg"))
+        mailto(to, rend("userMess.html",user = name, message = msg))
         return rend("message.html", message = "Message sent successfully.")
     return rend("newMessage.html", msg="Type your message here")
 

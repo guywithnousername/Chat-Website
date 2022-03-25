@@ -26,7 +26,7 @@ def chat(room):
         if request.cookies.get("Username"):
             name = request.cookies.get("Username")
         else:
-            name = "Anonymous" # replace with IP address
+            name = str(request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)) # replace with IP address
             anon = 1
         time = datetime.now().strftime("%B %d, %Y %I:%M%p")
         acttime = int(datetime.now().strftime("%s"))

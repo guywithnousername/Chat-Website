@@ -22,22 +22,27 @@ def chat(room):
         return rend("message.html",message="You cannot access this room.")
     if request.method == "POST":
         message = request.form.get("message")
-        name = request.cookies.get("Username") or 'Unnamed'
+        anon = 0
+        if request.cookies.get("Username"):
+            name = request.cookies.get("Username")
+        else:
+            name = "Anonymous" # replace with IP address
+            anon = 1
         time = datetime.now().strftime("%B %d, %Y %I:%M%p")
         acttime = int(datetime.now().strftime("%s"))
         cur.execute("""
-        INSERT INTO Messages (RoomName,MSG,Username,Timestring,Time)
-        VALUES (?,?,?,?,?)
-        """, (room.title(),message,name,time,acttime))
+        INSERT INTO Messages (RoomName,MSG,Username,Timestring,Time,Anon)
+        VALUES (?,?,?,?,?,?)
+        """, (room.title(),message,name,time,acttime,anon))
         con.commit()
         return redirect(f"/chatroom/{room}")
     select = database.query_db("""
-        SELECT MSG,Username,Timestring FROM Messages
+        SELECT MSG,Username,Timestring,Anon FROM Messages
         WHERE RoomName = ?
         ORDER BY Time DESC
         """,(room.title(),))
     con.close()
-    select = [(x[0],x[1],x[2]) for x in select]
+    select = [(x[0],x[1],x[2],x[3]) for x in select]
     return rend("room.html",rname=room,messages=select)
 
 @chatpage.route("/roomselect",methods=['GET','POST'])

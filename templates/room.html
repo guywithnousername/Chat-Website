@@ -8,10 +8,10 @@
 </form>
 {% if messages %}
 <ul>
-{% for msg,username,time in messages %}
+{% for msg,username,time,anon in messages %}
 <div class="border">
-{% if (username == "Unnamed") %}
-<p>Unnamed-</p>
+{% if (anon == 1) %}
+<p>{{ username }}-</p>
 {% else %}
 <a href={{ "/users/"+username }}>{{ username.title() }}-</a>
 {% endif %}

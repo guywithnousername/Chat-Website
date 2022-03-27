@@ -38,12 +38,13 @@ function create() {
 	let fences = map.addTilesetImage('fences','fences');
 	let fencelayer = map.createLayer('Fences',fences,0,0);
 
-	map.setCollisionByExclusion(-1,true, false,fencelayer);
+	map.setCollisionByExclusion([35],true, true,fencelayer);
 	this.cube = this.physics.add.sprite(240,240,"cube");
 	this.cube.setCollideWorldBounds(true);
-	this.physics.add.collider(this.cube, fencelayer); // This fixed the problem!
+	this.physics.add.collider(this.cube, fencelayer);
 
 	this.cursors = this.input.keyboard.createCursorKeys();
+	console.log(map.getTileAt(7,11,false,fencelayer))
 }
 function update() {
 	if (this.cursors.left.isDown) {

@@ -28,6 +28,8 @@ def chat(room):
         message = re.sub(r"## (.+)", r"<h2>\1</h2>",message)
         message = re.sub(r"# (.+)", r"<h1>\1</h1>",message)
         message = re.sub(r"\[(.+)\]\(((https?://)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)\)",r"<a href='\2'>\1</a>",message)
+        message = re.sub(r"\*\*(.+)\*\*",r"<strong>\1</strong>",message)
+        message = re.sub(r"__(.+)__",r"<i>\1</i>",message)
 
         anon = 0
         if request.cookies.get("Username"):

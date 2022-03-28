@@ -5,6 +5,7 @@ import random
 import string
 from chat import mailboxmsg as mailto
 import htmlentities as h
+import re
 
 userpage = Blueprint('userpage',__name__,template_folder="templates",static_folder="static")
 
@@ -41,7 +42,13 @@ def changeprof():
     cur = con.cursor()
     bio = cur.execute("SELECT * FROM Users WHERE Username = ?",(name,)).fetchone()["Bio"]
     if (request.method == "POST"):
-        new = request.form.get("bio")
+        new = h.encode(request.form.get("bio"))
+        new = re.sub(r"### (.+)", r"<h3>\1</h3>",new)
+        new = re.sub(r"## (.+)", r"<h2>\1</h2>",new)
+        new = re.sub(r"# (.+)", r"<h1>\1</h1>",new)
+        new = re.sub(r"\[(.+)\]\(((https?://)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)\)",r"<a href='\2'>\1</a>",new)
+        new = re.sub(r"\*\*(.+)\*\*",r"<strong>\1</strong>",new)
+        new = re.sub(r"__(.+)__",r"<i>\1</i>",new)
         cur.execute("""
         UPDATE Users
         SET Bio = ?
@@ -115,8 +122,14 @@ def newMessages():
     
     if request.method == 'POST':
         to = request.form.get("to").title()
-        msg = h.encode(request.form.get("msg"))
-        mailto(to, rend("userMess.html",user = name, message = msg))
+        message = h.encode(request.form.get("msg"))
+        message = re.sub(r"### (.+)", r"<h3>\1</h3>",message)
+        message = re.sub(r"## (.+)", r"<h2>\1</h2>",message)
+        message = re.sub(r"# (.+)", r"<h1>\1</h1>",message)
+        message = re.sub(r"\[(.+)\]\(((https?://)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)\)",r"<a href='\2'>\1</a>",message)
+        message = re.sub(r"\*\*(.+)\*\*",r"<strong>\1</strong>",message)
+        message = re.sub(r"__(.+)__",r"<i>\1</i>",message)
+        mailto(to, rend("userMess.html",user = name, message = message))
         return rend("message.html", message = "Message sent successfully.")
     return rend("newMessage.html", msg="Type your message here")
 

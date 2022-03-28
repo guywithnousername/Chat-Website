@@ -17,7 +17,7 @@
 <a href={{ "/users/"+username }}>{{ username.title() }}-</a>
 {% endif %}
 <p>{{ time }}</p>
-<li><pre> {{ msg }}</pre></li>
+<li><pre> {{ msg|safe }}</pre></li>
 <br>
 </div>
 {% endfor %}

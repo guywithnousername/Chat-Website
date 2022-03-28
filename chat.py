@@ -4,6 +4,8 @@ import database
 import sqlite3
 from cryptography.fernet import Fernet
 from datetime import datetime
+import re
+import htmlentities as h
 
 chatpage = Blueprint('chatpage',__name__,template_folder="templates",static_folder="static")
 cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
@@ -21,12 +23,17 @@ def chat(room):
     if (room != decodedroom):
         return rend("message.html",message="You cannot access this room.")
     if request.method == "POST":
-        message = request.form.get("message")
+        message = h.encode(request.form.get("message"))
+        message = re.sub(r"### (.+)", r"<h3>\1</h3>",message)
+        message = re.sub(r"## (.+)", r"<h2>\1</h2>",message)
+        message = re.sub(r"# (.+)", r"<h1>\1</h1>",message)
+        message = re.sub(r"\[(.+)\]\(((https?://)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)\)",r"<a href='\2'>\1</a>",message)
+
         anon = 0
         if request.cookies.get("Username"):
             name = request.cookies.get("Username")
         else:
-            name = str(request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)) # replace with IP address
+            name = str(request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr))
             anon = 1
         time = datetime.now().strftime("%B %d, %Y %I:%M%p")
         acttime = int(datetime.now().strftime("%s"))

@@ -10,6 +10,7 @@ import datetime
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from database import *
+import htmlentities as h
 from chat import chatpage
 from user import userpage
 
@@ -55,7 +56,14 @@ def index():
         else: coins = coins["Num"]
         bio = query_db("SELECT * FROM Users WHERE Username = ?",(name,),one=True)
         if not bio: bio = "You do not have a bio."
-        else: bio = bio["Bio"]
+        else: 
+            bio = h.encode(bio["Bio"])
+            bio = re.sub(r"### (.+)", r"<h3>\1</h3>",bio)
+            bio = re.sub(r"## (.+)", r"<h2>\1</h2>",bio)
+            bio = re.sub(r"# (.+)", r"<h1>\1</h1>",bio)
+            bio = re.sub(r"\[(.+)\]\(((https?://)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)\)",r"<a href='\2'>\1</a>",bio)
+            bio = re.sub(r"\*\*(.+)\*\*",r"<strong>\1</strong>",bio)
+            bio = re.sub(r"__(.+)__",r"<i>\1</i>",bio)
         friends = [x["Friend1"] if x["Friend1"] != name else x["Friend2"] for x in query_db("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?) AND Code = 'confirmed'",(name,name))]
         box = query_db("SELECT Box FROM Coins WHERE Username = ?",(name,),one=True)
         if not box: box = False

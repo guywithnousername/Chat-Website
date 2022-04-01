@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div style = "padding-left:16px;margin-left: 5%;">
 <div style="display: grid;
     grid-template-columns:1fr 1fr;
     grid-gap:20px;">
@@ -10,13 +11,14 @@
 	</div>
 </div><br>
 <h1>Bio</h1>
-<pre>{{ bio }}</pre>
+<pre>{{ bio|safe }}</pre>
 <div class="sidenav">
     <a href="/newroom">Create a room</a><br><br>
     <a href="/change/password">Reset password</a><br><br>
     <a href="/change/profile">Change profile</a><br><br>
     <a href="/newfriend">Add a friend</a><br><br>
-    <a href="/messages">View your mailbox</a>
+    <a href="/messages">View your mailbox {% if mess %}<span class="badge">{{ mess }}</span>{% endif %}</a><br>
+    <a href="/newMessages">Message a user</a>
 </div>
 <h2>Play a game</h2>
 {% if coins >= 30 %}
@@ -46,5 +48,6 @@
 </div>
 <script src="/static/box.js"></script>
 {% endif %}
+</div>
 {% endblock %}
 {% block title %}Home{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>New Message </h1>
+<br>
+<form method = "post">
+    <label for = "to"> To: </label><br>
+    <input type="text" id="to" name="to" required><span></span><br>
+    <label for = "msg"> Message: </label><br>
+    <textarea id="text" name="msg" rows="7" cols="33" maxlength="150">{{ msg }}</textarea><br>
+    <br><input type="submit" value="Submit">
+</form>
+{% endblock %}
+{% block title %} New Message {% endblock %}

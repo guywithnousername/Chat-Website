@@ -4,6 +4,8 @@ import database
 import sqlite3
 from cryptography.fernet import Fernet
 from datetime import datetime
+import re
+import htmlentities as h
 
 chatpage = Blueprint('chatpage',__name__,template_folder="templates",static_folder="static")
 cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
@@ -21,23 +23,35 @@ def chat(room):
     if (room != decodedroom):
         return rend("message.html",message="You cannot access this room.")
     if request.method == "POST":
-        message = request.form.get("message")
-        name = request.cookies.get("Username") or 'Unnamed'
+        message = h.encode(request.form.get("message"))
+        message = re.sub(r"### (.+)", r"<h3>\1</h3>",message)
+        message = re.sub(r"## (.+)", r"<h2>\1</h2>",message)
+        message = re.sub(r"# (.+)", r"<h1>\1</h1>",message)
+        message = re.sub(r"\[(.+)\]\(((https?://)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)\)",r"<a href='\2'>\1</a>",message)
+        message = re.sub(r"\*\*(.+)\*\*",r"<strong>\1</strong>",message)
+        message = re.sub(r"__(.+)__",r"<i>\1</i>",message)
+
+        anon = 0
+        if request.cookies.get("Username"):
+            name = request.cookies.get("Username")
+        else:
+            name = str(request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr))
+            anon = 1
         time = datetime.now().strftime("%B %d, %Y %I:%M%p")
         acttime = int(datetime.now().strftime("%s"))
         cur.execute("""
-        INSERT INTO Messages (RoomName,MSG,Username,Timestring,Time)
-        VALUES (?,?,?,?,?)
-        """, (room.title(),message,name,time,acttime))
+        INSERT INTO Messages (RoomName,MSG,Username,Timestring,Time,Anon)
+        VALUES (?,?,?,?,?,?)
+        """, (room.title(),message,name,time,acttime,anon))
         con.commit()
         return redirect(f"/chatroom/{room}")
     select = database.query_db("""
-        SELECT MSG,Username,Timestring FROM Messages
+        SELECT MSG,Username,Timestring,Anon FROM Messages
         WHERE RoomName = ?
         ORDER BY Time DESC
         """,(room.title(),))
     con.close()
-    select = [(x[0],x[1],x[2]) for x in select]
+    select = [(x[0],x[1],x[2],x[3]) for x in select]
     return rend("room.html",rname=room,messages=select)
 
 @chatpage.route("/roomselect",methods=['GET','POST'])

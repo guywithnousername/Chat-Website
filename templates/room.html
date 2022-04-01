@@ -3,20 +3,21 @@
 <h1>{{ rname }}</h1><br>
 <button type="button" onclick="window.location.reload(1);">Refresh messages</button>
 <form method = "post">
-    <label for = "message"> Write a new message: </label><br>
-    <input type="text" id="message" name="message">
+    <label for="message">Type your message:</label><br>
+    <textarea id="message" name="message" rows = "6" cols = "33" maxlength="150"></textarea><br>
+    <input type="submit" value = "Post">
 </form>
 {% if messages %}
 <ul>
-{% for msg,username,time in messages %}
+{% for msg,username,time,anon in messages %}
 <div class="border">
-{% if (username == "Unnamed") %}
-<p>Unnamed-</p>
+{% if (anon == 1) %}
+<p>{{ username }}-</p>
 {% else %}
 <a href={{ "/users/"+username }}>{{ username.title() }}-</a>
 {% endif %}
 <p>{{ time }}</p>
-<li> {{ msg }}</li>
+<li><pre> {{ msg|safe }}</pre></li>
 <br>
 </div>
 {% endfor %}

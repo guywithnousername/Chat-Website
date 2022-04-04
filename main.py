@@ -163,6 +163,10 @@ def confirmname(name):
     con.close()
     return rend("message.html",message="Your account has been confirmed! Now login to your account.")
 
+@app.route("/block/<name>")
+def block(name):
+    return rend("block.html",name=name)
+
 def email(html,recipients=['mldu@cydu.net']):
     msg = Message("Email",
     sender="mldu@cydu.net",

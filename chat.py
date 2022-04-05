@@ -97,10 +97,17 @@ def newroom():
     return rend("nameform.html",type="Create a new room")
 
 def mailboxmsg(recipient,content):
+    content2 = content
     con = database.get_db()
     cur = con.cursor()
+    user = request.cookies.get("Username")
+    sel = database.query_db("SELECT * FROM Block WHERE Blocker = ? AND Blocked = ?",args = (recipient,user),one = True)
     time = int(datetime.now().strftime("%s"))
-    cur.execute("INSERT INTO UserMessages (Recipient,MSG,Time,Read) Values (?,?,?,0)",(recipient,content,time))
+    if sel != None:
+        othermess = "Your message to ' " + recipient + " ' was blocked on the way."
+        content2 = "A blocked user, ' " + user + " ', sent you a message, but it was blocked."
+        cur.execute("INSERT INTO UserMessages (Recipient,MSG,Time,Read) VALUES (?,?,?,0)",(user,othermess,time))
+    cur.execute("INSERT INTO UserMessages (Recipient,MSG,Time,Read) Values (?,?,?,0)",(recipient,content2,time))
     con.commit()
 
 @chatpage.route("/confirmfriend/<code>")

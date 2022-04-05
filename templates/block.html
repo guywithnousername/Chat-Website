@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>THIS IS A WORK IN PROGRESS</p>
+<h2>Block ' {{ name }} '</h2>
+<form method="post">
+	<input type="submit" value="Block">
+</form>
 {% endblock %}
 
 {% block title %}Block ' {{ name }} ' {% endblock %}

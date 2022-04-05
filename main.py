@@ -163,8 +163,21 @@ def confirmname(name):
     con.close()
     return rend("message.html",message="Your account has been confirmed! Now login to your account.")
 
-@app.route("/block/<name>")
+@app.route("/block/<name>",methods = ['GET','POST'])
 def block(name):
+    user = request.cookies.get("Username")
+    if not user:
+        return rend("message.html",message = "You aren't logged in.")
+    if request.method == "POST":
+        con = get_db()
+        cur = con.cursor()
+        sel = query_db("SELECT * FROM Block WHERE Blocker = ? AND Blocked = ?",args = (user,name),one=True)
+        if sel != None:
+            return rend("message.html",message = "Already blocked.")
+        cur.execute("INSERT INTO Block (Blocker,Blocked,ALLIP) VALUES (?,?,?)",(user,name,0))
+        con.commit()
+        con.close()
+        return rend("message.html",message = "Blocked.")
     return rend("block.html",name=name)
 
 def email(html,recipients=['mldu@cydu.net']):

@@ -33,12 +33,13 @@ def viewuser(name):
     if username == name:
         return redirect("/")
     friend = cur.execute("SELECT * FROM Friends WHERE ((Friend1 = ? AND Friend2 = ?) OR (Friend2 = ? AND Friend1 = ?)) AND Code = 'confirmed'",(username,name,username,name)).fetchone()
+    isblocked = database.query_db("SELECT * FROM Block WHERE Blocker = ? AND Blocked = ?",args = (username,name),one = True)
     if request.method == "POST" and friend:
         cur.execute("DELETE FROM Friends WHERE ((Friend1 = ? AND Friend2 = ?) OR (Friend2 = ? AND Friend1 = ?)) AND Code = 'confirmed'",(username,name,username,name))
         con.commit()
         con.close()
         return rend("message.html",message = "That friend was unfriended.")
-    return rend("userpage.html",name=name,bio=bio,friend=friend,coins=coins,friends=friends)
+    return rend("userpage.html",name=name,bio=bio,friend=friend,coins=coins,friends=friends,isblocked=isblocked)
 
 @userpage.route("/change/profile",methods = ['GET','POST'])
 def changeprof():

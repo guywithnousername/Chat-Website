@@ -174,7 +174,7 @@ def block(name):
         sel = query_db("SELECT * FROM Block WHERE Blocker = ? AND Blocked = ?",args = (user,name),one=True)
         if sel != None:
             return rend("message.html",message = "Already blocked.")
-        cur.execute("INSERT INTO Block (Blocker,Blocked,ALLIP) VALUES (?,?,?)",(user,name,0))
+        cur.execute("INSERT INTO Block (Blocker,Blocked) VALUES (?,?)",(user,name))
         con.commit()
         con.close()
         return rend("message.html",message = "Blocked.")

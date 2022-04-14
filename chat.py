@@ -126,3 +126,20 @@ def confirm(code):
     con.commit()
     con.close()
     return rend("message.html",message="Successfully friended!")
+
+@chatpage.route("/unblock/<name>",methods = ["GET","POST"])
+def unblock(name):
+    user = request.cookies.get("Username")
+    if not user:
+        return rend("message.html",message = "You aren't logged in.")
+    if request.method == "POST":
+        con = database.get_db()
+        cur = con.cursor()
+        sel = database.query_db("SELECT * FROM Block WHERE Blocker = ? AND Blocked = ?",args = (user,name),one=True)
+        if sel == True:
+            return rend("message.html",message = "You haven't even blocked that user.")
+        cur.execute("DELETE FROM Block WHERE Blocker = ? AND Blocked = ?",(user,name))
+        con.commit()
+        con.close()
+        return rend("message.html",message = "Unblocked.")
+    return rend("unblock.html",name=name)

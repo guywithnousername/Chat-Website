@@ -7,7 +7,11 @@
     <form method="post"><input type="submit" value="&#10060;"></form>
     {% endif %}
     <h1>{{ name }}</h1>
+    {% if not isblocked %}
     <h1><a href={{ "/block/" + name}}>Block</a></h1>
+    {% else %}
+    <h1><a href={{ "/unblock/" + name }}>Unblock</a></h1>
+    {% endif %}
     <div style="right:5;display:block">
         <h1><img src="/static/coinimg.png" alt="An image of a coin."> {{ coins }}</h1>
     </div>

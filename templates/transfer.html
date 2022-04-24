@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method = "post">
+	<label for="num">Number of coins:</label><br>
+	<input id="num" name="num"><br>
+	<label for="user">To:</label><br>
+	<input type="text" id="user" name="user"><br>
+	<label for="pass">Confirm using password:</label><br>
+	<input type="password" id="pass" name="pass"><br>
+	<input type="submit" value="Transfer Coins">
+</form>
+<script>
+let spin = $("#num").spinner();
+spin.spinner('option','min',1);
+</script>
+<script>spin.spinner('option','max',{{ max|safe }});</script>
+{% endblock %}
+
+{% block title %}transfer coins{% endblock %}

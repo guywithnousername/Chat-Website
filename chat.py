@@ -143,3 +143,39 @@ def unblock(name):
         con.close()
         return rend("message.html",message = "Unblocked.")
     return rend("unblock.html",name=name)
+
+@chatpage.route("/transfer",methods = ['GET','POST'])
+def transfer():
+    n = request.cookies.get("Username")
+    if not n:
+        return rend("message.html",message = "You aren't logged in.")
+    con = database.get_db()
+    cur = con.cursor()
+    coins = database.query_db("SELECT Num FROM Coins WHERE Username = ?",args=(n,),one=True)["Num"]
+    if request.method == "POST":
+        user = request.form.get("user").title()
+        sel = database.query_db("SELECT * FROM Users WHERE Username = ?",args=(user,))
+        if sel == None:
+            return rend("message.html",message="That user doesn't exist.")
+        password = request.form.get("pass")
+        confirm = database.query_db("SELECT Pass FROM Users WHERE Username = ?",args=(n,),one=True)["Pass"]
+        if confirm != password:
+            return rend("message.html",message="Wrong password.")
+        num = request.form.get("num")
+        try:
+            num = int(num)
+        except:
+            return rend("message.html",message="Invalid number.")
+        if not num or num <= 0 or num > coins:
+            return rend("message.html",message="Invalid number.")
+
+        sel = database.query_db("SELECT Num FROM Coins WHERE Username = ?",args=(user,),one=True)
+        if not sel:
+            cur.execute("INSERT INTO Coins(Username,Num,Box) VALUES(?,?,1)",(user,num))
+        else:
+            cur.execute("UPDATE Coins SET Num = ? WHERE Username = ?",((sel["Num"] + num),user))
+        cur.execute("UPDATE Coins SET Num = ? WHERE Username = ?",((coins - num),n))
+        con.commit()
+        con.close()
+        return rend("message.html", message = "Transferred.")
+    return rend("transfer.html",max=str(coins))

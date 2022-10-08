@@ -50,5 +50,6 @@ CREATE TABLE IF NOT EXISTS Topics (
 	Title TEXT NOT NULL,
 	Username TEXT NOT NULL,
 	Content TEXT,
-	Time INTEGER
+	Time TEXT NOT NULL,
+	Acttime INTEGER
 );

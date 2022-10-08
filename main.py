@@ -13,10 +13,12 @@ from database import *
 import htmlentities as h
 from chat import chatpage
 from user import userpage
+from topics import topicspage
 
 app = Flask(__name__)
 app.register_blueprint(chatpage)
 app.register_blueprint(userpage)
+app.register_blueprint(topicspage)
 app.config['TESTING'] = False
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465

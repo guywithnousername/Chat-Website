@@ -2,13 +2,13 @@
 {% block content %}
 <h1> Feed </h1>
 <button type="button" onclick="window.location.reload(1);">Refresh feed</button>
-<br><a href = "/post/">Post</a>
+<br><a href = "/post/" class="linkbutton">Post</a>
 {% if feed %}
 {% for title, user, content, time in feed %}
 <hr>
 <div class = "border">
 <h2> {{ title }}</h2>
-<h3> - {{ user }}, on {{ time }}</h3>
+<h3> - <a href={{ "/users/"+ user }}>{{ user.title() }}</a>, on {{ time }}</h3>
 <br> <p> {{ content }} </p>
 </div>
 {% endfor %}

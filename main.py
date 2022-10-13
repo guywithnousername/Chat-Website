@@ -11,6 +11,7 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from database import *
 import htmlentities as h
+from cryptography.fernet import Fernet
 from chat import chatpage
 from user import userpage
 from topics import topicspage
@@ -19,6 +20,8 @@ app = Flask(__name__)
 app.register_blueprint(chatpage)
 app.register_blueprint(userpage)
 app.register_blueprint(topicspage)
+cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
+fernet = Fernet(cryptokey)
 app.config['TESTING'] = False
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
@@ -130,7 +133,7 @@ def login():
                 return rend("message.html",message="You have not confirmed your account.")
             if ret['Pass'] == password:
                 resp = make_response(redirect("/"))
-                resp.set_cookie("Username",name.title())
+                resp.set_cookie("Username",fernet.encrypt(name.title().encode()))
                 return resp
             else:
                 return rend("message.html",message="You have entered the password incorrectly.")

@@ -6,8 +6,29 @@ import string
 from chat import mailboxmsg as mailto
 import htmlentities as h
 import re
+from cryptography.fernet import Fernet
+import sqlite3
 
 userpage = Blueprint('userpage',__name__,template_folder="templates",static_folder="static")
+cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
+fernet = Fernet(cryptokey)
+
+def checkIfIn(cookie):
+    con = database.get_db()
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    if not cookie:
+        return False
+    cookie =  bytes(cookie, 'utf-8')
+    try:
+        decoded = fernet.decrypt(cookie).decode("utf-8");
+    except:
+        return False
+    select = database.query_db("""
+        SELECT Username FROM Users
+        WHERE Username = ?
+        """,(decoded,), one=True)
+    return select[0]
 
 @userpage.route("/users/<name>",methods=['GET','POST'])
 def viewuser(name):
@@ -30,6 +51,7 @@ def viewuser(name):
     if coins: coins = coins["Num"]
     friends = [x["Friend1"] if x["Friend1"] != name else x["Friend2"] for x in database.query_db("SELECT * FROM Friends WHERE (Friend1 = ? OR Friend2 = ?) AND Code = 'confirmed'",(name,name))]
     username = request.cookies.get("Username")
+    username = checkIfIn(username)
     if username == name:
         return redirect("/")
     friend = cur.execute("SELECT * FROM Friends WHERE ((Friend1 = ? AND Friend2 = ?) OR (Friend2 = ? AND Friend1 = ?)) AND Code = 'confirmed'",(username,name,username,name)).fetchone()
@@ -44,7 +66,8 @@ def viewuser(name):
 @userpage.route("/change/profile",methods = ['GET','POST'])
 def changeprof():
     name = request.cookies.get("Username")
-    if name == None:
+    name = checkIfIn(name)
+    if not name:
         return rend("message.html",message="You aren't logged in.")
     con = database.get_db()
     cur = con.cursor()
@@ -64,7 +87,8 @@ def changeprof():
 @userpage.route("/change/password",methods = ['GET','POST'])
 def changepass():
     name = request.cookies.get("Username")
-    if name == None:
+    name = checkIfIn(name)
+    if not name:
         return rend("message.html",message="You aren't logged in.")
     if request.method == "POST":
         password = database.query_db("SELECT * FROM Users WHERE Username = ?",args=(name,),one=True)["Pass"]
@@ -85,7 +109,8 @@ def changepass():
 @userpage.route("/newfriend",methods=['GET','POST'])
 def addfriend():
     name = request.cookies.get("Username")
-    if name == None:
+    name = checkIfIn(name)
+    if not name:
         return rend("message.html",message="You aren't logged in.")
     if request.method == 'POST':
         con = database.get_db()
@@ -108,6 +133,7 @@ def addfriend():
 @userpage.route("/messages")
 def messages():
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if not name:
         return rend("message.html",message="You aren't logged in.")
     con = database.get_db()
@@ -119,6 +145,7 @@ def messages():
 @userpage.route("/newMessages", methods=['GET', 'POST'])
 def newMessages():
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if not name:
         return rend("message.html",message="You aren't logged in.")
     
@@ -148,8 +175,9 @@ def markread(code):
 @userpage.route("/addcoin/<user>")
 def addcoin(user):
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if not name:
-        return rend("message.html",message="You aren't supposed to be here.")
+        return rend("message.html",message="You aren't logged in.")
     sel = database.query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)
     con = database.get_db()
     cur = con.cursor()
@@ -168,6 +196,7 @@ def addcoin(user):
 @userpage.route("/play")
 def playgame():
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if not name:
         return rend("message.html",message="You aren't logged in.")
     sel = database.query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)

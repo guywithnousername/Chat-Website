@@ -11,6 +11,23 @@ chatpage = Blueprint('chatpage',__name__,template_folder="templates",static_fold
 cryptokey = b'RwdEWFPygOggOdXRkNSKGM8Wm58QT6ZIpZ34oauwkSE='
 fernet = Fernet(cryptokey)
 
+def checkIfIn(cookie): # had to add because circular import error
+    con = database.get_db()
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    if not cookie:
+        return False
+    cookie =  bytes(cookie, 'utf-8')
+    try:
+        decoded = fernet.decrypt(cookie).decode("utf-8");
+    except:
+        return False
+    select = database.query_db("""
+        SELECT Username FROM Users
+        WHERE Username = ?
+        """,(decoded,), one=True)
+    return select[0]
+
 @chatpage.route("/chatroom/<room>",methods = ['GET','POST'])
 def chat(room):
     con = database.get_db()
@@ -32,9 +49,9 @@ def chat(room):
         message = re.sub(r"__(.+)__",r"<i>\1</i>",message)
 
         anon = 0
-        if request.cookies.get("Username"):
-            name = request.cookies.get("Username")
-        else:
+        name = request.cookies.get("Username")
+        name = checkIfIn(name)
+        if not name:
             name = str(request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr))
             anon = 1
         time = datetime.now().strftime("%B %d, %Y %I:%M%p")
@@ -74,6 +91,10 @@ def selrooms():
 
 @chatpage.route("/newroom",methods=['GET','POST'])
 def newroom():
+    username = request.cookies.get("Username")
+    username = checkIfIn(username)
+    if not username:
+        return rend("message.html", message="You aren't logged in.")
     if request.method == "POST":
         name = request.form.get("name")
         password = request.form.get("password")
@@ -113,6 +134,7 @@ def mailboxmsg(recipient,content):
 @chatpage.route("/confirmfriend/<code>")
 def confirm(code):
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if code == "confirmed":
         return rend("message.html",message="Are you a hacker? If so, stop.")
     if not name:
@@ -130,6 +152,7 @@ def confirm(code):
 @chatpage.route("/unblock/<name>",methods = ["GET","POST"])
 def unblock(name):
     user = request.cookies.get("Username")
+    user = checkIfIn(user)
     if not user:
         return rend("message.html",message = "You aren't logged in.")
     if request.method == "POST":
@@ -147,6 +170,7 @@ def unblock(name):
 @chatpage.route("/transfer",methods = ['GET','POST'])
 def transfer():
     n = request.cookies.get("Username")
+    n = checkIfIn(n)
     if not n:
         return rend("message.html",message = "You aren't logged in.")
     con = database.get_db()

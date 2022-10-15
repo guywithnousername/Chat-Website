@@ -13,7 +13,7 @@ from database import *
 import htmlentities as h
 from cryptography.fernet import Fernet
 from chat import chatpage
-from user import userpage
+from user import userpage, checkIfIn
 from topics import topicspage
 
 app = Flask(__name__)
@@ -33,7 +33,6 @@ app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 mail = Mail(app)
 DATABASE = "database.db"
 
-
 def check_box():
     with app.app_context():
       con = get_db()
@@ -50,7 +49,8 @@ def check_box():
 @app.route("/",methods= ["GET","POST"])
 def index():
     name = request.cookies.get("Username")
-    if request.cookies.get("Username") == None:
+    name = checkIfIn(name)
+    if not name:
         return rend("index.html")
     else:
         con = get_db()
@@ -80,6 +80,7 @@ def index():
 @app.route("/register",methods = ['GET','POST'])
 def reg():
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if name:
         return rend("message.html",message = "Log out first")
     if request.method == "POST":
@@ -116,6 +117,7 @@ def reg():
 @app.route("/login",methods = ['GET','POST'])
 def login():
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if name:
         return rend("message.html",message="Log out first.")
     if request.method == "POST":
@@ -142,6 +144,7 @@ def login():
 @app.route("/logout",methods = ['GET','POST'])
 def logout():
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if name == None:
         return rend("message.html",message = "You aren't logged in.")
     if request.method == "POST":
@@ -171,6 +174,7 @@ def confirmname(name):
 @app.route("/block/<name>",methods = ['GET','POST'])
 def block(name):
     user = request.cookies.get("Username")
+    user = checkIfIn(user)
     if not user:
         return rend("message.html",message = "You aren't logged in.")
     if request.method == "POST":

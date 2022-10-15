@@ -3,6 +3,7 @@ from flask import render_template as rend
 import database
 import sqlite3
 from datetime import datetime
+from user import checkIfIn
 
 topicspage = Blueprint('topics',__name__,template_folder="templates",static_folder="static")
 
@@ -26,6 +27,7 @@ def newpost():
     cur = con.cursor()
     
     name = request.cookies.get("Username")
+    name = checkIfIn(name)
     if not name:
         return rend("message.html",message="You aren't logged in.")
     

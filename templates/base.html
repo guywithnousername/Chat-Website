@@ -17,10 +17,14 @@
             <a class = "active" href="/">Main Page</a>
             <a href='/roomselect'>Chat!</a>
 	    <a href='/feed'>Feed</a>
+	    {% if not findusername() %}
             <a href='/register' class="userform">Register</a>
             <a href='/login' class="userform">Login</a>
+	    {% endif %}
+	    {% if findusername() %}
             <a href="/logout" class="signedin">Log out</a>
-            <a class="signedin" href="#"></a>
+	    <a class="signedin" href="#">{{ findusername() }}</a>
+	    {% endif %}
         </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="/static/ui.js"></script>

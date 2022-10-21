@@ -15,6 +15,7 @@ from cryptography.fernet import Fernet
 from chat import chatpage
 from user import userpage, checkIfIn
 from topics import topicspage
+import htmlentities
 
 app = Flask(__name__)
 app.register_blueprint(chatpage)
@@ -32,6 +33,16 @@ app.config['MAIL_USE_SSL'] = True
 app.secret_key = '9ac7d06219fbfa373f76c9a6be47b178157e2a91436b263b703c63246e25'
 mail = Mail(app)
 DATABASE = "database.db"
+
+@app.context_processor
+def contextprocessor():
+    def findusername():
+        name = request.cookies.get("Username")
+        name = checkIfIn(name)
+        if name:
+            name = htmlentities.encode(name)
+        return name
+    return dict(findusername=findusername)
 
 def check_box():
     with app.app_context():

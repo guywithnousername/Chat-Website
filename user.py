@@ -200,14 +200,5 @@ def playgame():
     if not name:
         return rend("message.html",message="You aren't logged in.")
     sel = database.query_db("SELECT Num FROM Coins WHERE Username = ?",(name,),one=True)
-    if not sel or int(sel["Num"]) < 30:
-        return rend("message.html",message="You do not have enough coins.")
-    else:
-        con = database.get_db()
-        cur = con.cursor()
-        sel = int(sel["Num"])
-        sel -= 30
-        cur.execute("UPDATE Coins SET Num = ? WHERE Username = ?",(sel,name))
-        con.commit()
-    con.close()
-    return rend("play.html")
+    coins = int(sel["Num"]) or 0
+    return rend("play.html", coins = coins)
